@@ -21,7 +21,6 @@ public class MainMenuView {
     }
 
     public void onHostAction(ActionEvent actionEvent) throws IOException {
-        ClientApplication.client = new Client("localhost", 12345);
         Task<String> task = new Task<>() {
             @Override
             protected String call() throws Exception {
