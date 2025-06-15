@@ -1,21 +1,21 @@
 package etu.ensicaen.server;
 
-import etu.ensicaen.shared.Protocol;
-import etu.ensicaen.shared.models.Player;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Server {
     private ServerSocket serverSocket;
+    private Map<String, Session> sessions;
 
     public Server(int port) throws IOException {
         serverSocket = new ServerSocket(port);
+        sessions = new HashMap<>();
         System.out.println("Server started on port " + port);
     }
 
