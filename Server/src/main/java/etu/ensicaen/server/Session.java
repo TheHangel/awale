@@ -1,64 +1,37 @@
 package etu.ensicaen.server;
 
-import etu.ensicaen.shared.Protocol;
-import etu.ensicaen.shared.models.Game;
-import etu.ensicaen.shared.models.Player;
-
-import java.io.IOException;
 import java.net.Socket;
 import java.util.UUID;
 
-public class Session implements Runnable {
+public class Session {
     private final String id;
-    private Socket socket1, socket2;
-    private Player player1, player2;
-    private Game game;
+    private final Socket hostSocket;
+    private Socket guestSocket;
 
-    public Session(String id) {
-        this.id = id;
+    public Session(Socket hostSocket) {
+        this.id = UUID.randomUUID().toString().substring(0, 8);
+        this.hostSocket = hostSocket;
     }
 
-    public String getId() { return id; }
+    public String getId() {
+        return id;
+    }
 
-    public synchronized void addPlayer(Socket socket, Player player) {
-        if (socket1 == null) {
-            socket1 = socket;
-            player1 = player;
-        } else if (socket2 == null) {
-            socket2 = socket;
-            player2 = player;
-        } else {
-            throw new IllegalStateException("Session pleine");
+    public synchronized boolean addGuest(Socket socket) {
+        if (guestSocket == null) {
+            guestSocket = socket;
+            return true;
         }
+        return false;
     }
 
     public boolean isFull() {
-        return socket1 != null && socket2 != null;
+        return hostSocket != null && guestSocket != null;
     }
 
-    @Override
-    public void run() {
-        try {
-            Protocol.writeString(socket1, "START:" + player2.getUsername());
-            Protocol.writeString(socket2, "START:" + player1.getUsername());
-
-            while (!socket1.isClosed() && !socket2.isClosed()) {
-                String msg1 = Protocol.readString(socket1);
-                Protocol.writeString(socket2, msg1);
-
-                String msg2 = Protocol.readString(socket2);
-                Protocol.writeString(socket1, msg2);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            closeSockets();
-            System.out.println("Session " + id + " terminée.");
-        }
-    }
-
-    private void closeSockets() {
-        try { if (socket1 != null) socket1.close(); } catch (IOException ignored) {}
-        try { if (socket2 != null) socket2.close(); } catch (IOException ignored) {}
+    public Socket getOther(Socket s) {
+        if (s == hostSocket) return guestSocket;
+        if (s == guestSocket) return hostSocket;
+        return null;
     }
 }
