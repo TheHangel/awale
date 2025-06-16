@@ -1,8 +1,6 @@
 package etu.ensicaen.client.views;
 
-import etu.ensicaen.client.ClientApplication;
 import etu.ensicaen.client.viewsmodels.MainMenuViewModel;
-import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
