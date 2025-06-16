@@ -1,10 +1,11 @@
 package etu.ensicaen.shared.models;
 
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.TreeSet;
 
-public class Leaderboard extends TreeSet<PlayerScore> {
+public class Leaderboard extends TreeSet<PlayerScore> implements Serializable {
     public Leaderboard() {
         super(Comparator
                 .comparing(PlayerScore::getScore).reversed()

@@ -1,6 +1,8 @@
 package etu.ensicaen.shared.models;
 
-public class PlayerScore implements Comparable<PlayerScore> {
+import java.io.Serializable;
+
+public class PlayerScore implements Comparable<PlayerScore>, Serializable {
     private Integer score = 0;
     private final Player player;
 

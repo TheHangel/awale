@@ -1,5 +1,7 @@
 package etu.ensicaen.shared.models;
 
-public class Game {
+import java.io.Serializable;
+
+public class Game implements Serializable {
     // code règles du jeu ici
 }

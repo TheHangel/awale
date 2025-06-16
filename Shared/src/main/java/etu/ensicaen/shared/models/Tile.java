@@ -1,6 +1,8 @@
 package etu.ensicaen.shared.models;
 
-public class Tile {
+import java.io.Serializable;
+
+public class Tile implements Serializable {
     private int seeds;
     private final Player owner;
 
