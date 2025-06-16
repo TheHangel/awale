@@ -24,36 +24,10 @@ public class MainMenuView {
     }
 
     public void onHostAction(ActionEvent actionEvent) throws IOException {
-        Task<String> task = new Task<>() {
-            @Override
-            protected String call() throws Exception {
-                return ClientApplication.client.host();
-            }
-        };
-
-        task.setOnSucceeded(ev ->
-                System.out.println(task.getValue())
-        );
-
-        new Thread(task).start();
+        this.viewModel.onHost();
     }
 
     public void onJoinAction(ActionEvent actionEvent) throws IOException {
-        Task<String> task = new Task<>() {
-            @Override
-            protected String call() throws Exception {
-                return ClientApplication.client.join(sessionIdTextField.getText().trim());
-            }
-        };
-
-        task.setOnSucceeded(ev ->
-                System.out.println(task.getValue())
-        );
-
-        task.setOnFailed(ev ->
-                System.out.println(task.getValue())
-        );
-
-        new Thread(task).start();
+        this.viewModel.onJoin(sessionIdTextField.getText().trim());
     }
 }

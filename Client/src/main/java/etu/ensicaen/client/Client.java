@@ -27,7 +27,7 @@ public class Client {
     }
 
     public String join(String id) throws IOException {
-        return this.sendMessage("JOIN" + id);
+        return this.sendMessage("JOIN:" + id);
     }
 
     public String readMessage() throws IOException {
