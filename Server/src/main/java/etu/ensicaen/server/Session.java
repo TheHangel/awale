@@ -20,7 +20,8 @@ public class Session {
         this.players = new ArrayList<>();
         this.scores  = new ArrayList<>();
 
-        Player hostPlayer = new Player("name player 1");
+        Player hostPlayer = new Player("name player 1"); // @todo send custom username
+        // add the host (who created the session) to the session
         this.players.add(hostPlayer);
         this.scores.add(new PlayerScore(hostPlayer));
         this.hostSocket = hostSocket;
@@ -33,7 +34,7 @@ public class Session {
     public synchronized boolean addGuest(Socket socket) {
         if (guestSocket == null) {
             guestSocket = socket;
-            Player hostPlayer = new Player("name player 2");
+            Player hostPlayer = new Player("name player 2"); // @todo send custom username
             this.players.add(hostPlayer);
             this.scores.add(new PlayerScore(hostPlayer));
             return true;
