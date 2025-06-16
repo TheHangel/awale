@@ -1,7 +1,7 @@
 package etu.ensicaen.shared.models;
 
 public class Player {
-    private String username;
+    private final String username;
 
     public Player(String username) {
         this.username = username;
