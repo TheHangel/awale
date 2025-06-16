@@ -27,7 +27,7 @@ public class MainMenuView {
         Task<String> task = new Task<>() {
             @Override
             protected String call() throws Exception {
-                return ClientApplication.client.sendMessage("HOST");
+                return ClientApplication.client.host();
             }
         };
 
@@ -42,7 +42,7 @@ public class MainMenuView {
         Task<String> task = new Task<>() {
             @Override
             protected String call() throws Exception {
-                return ClientApplication.client.sendMessage("JOIN:" + sessionIdTextField.getText().trim());
+                return ClientApplication.client.join(sessionIdTextField.getText().trim());
             }
         };
 

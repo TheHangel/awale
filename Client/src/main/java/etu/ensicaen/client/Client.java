@@ -22,6 +22,14 @@ public class Client {
         return in.readLine();
     }
 
+    public String host() throws IOException {
+        return this.sendMessage("HOST");
+    }
+
+    public String join(String id) throws IOException {
+        return this.sendMessage("JOIN" + id);
+    }
+
     public String readMessage() throws IOException {
         return in.readLine();
     }
