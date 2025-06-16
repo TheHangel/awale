@@ -7,12 +7,20 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 public class Server {
+    private static Server server;
     private ServerSocket serverSocket;
     private final ConcurrentMap<String, Session> sessions = new ConcurrentHashMap<>();
 
-    public Server(int port) throws IOException {
+    private Server(int port) throws IOException {
         serverSocket = new ServerSocket(port);
         System.out.println("Server started on port " + port);
+    }
+
+    public static Server get() throws IOException {
+        if(server == null) {
+            server = new Server(12345);
+        }
+        return server;
     }
 
     public void start() throws IOException {
