@@ -1,6 +1,6 @@
 package etu.ensicaen.client.models;
 
-import etu.ensicaen.client.ClientApplication;
+import etu.ensicaen.client.Client;
 import javafx.concurrent.Task;
 
 public class MainMenu {
@@ -8,7 +8,7 @@ public class MainMenu {
         Task<String> task = new Task<>() {
             @Override
             protected String call() throws Exception {
-                return ClientApplication.client.host();
+                return Client.get().host();
             }
         };
 
@@ -23,7 +23,7 @@ public class MainMenu {
         Task<String> task = new Task<>() {
             @Override
             protected String call() throws Exception {
-                return ClientApplication.client.join(id);
+                return Client.get().join(id);
             }
         };
 

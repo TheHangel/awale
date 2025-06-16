@@ -7,21 +7,12 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class ClientApplication extends Application {
-    public static Client client;
-
-    static {
-        try {
-            client = new Client("localhost", 12345);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     @Override
     public void start(Stage stage) throws IOException {
+        Client.get("localhost", 12345);
         stage.setOnCloseRequest(ev -> {
             try {
-                ClientApplication.client.close();
+                Client.get().close();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

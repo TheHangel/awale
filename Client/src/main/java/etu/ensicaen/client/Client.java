@@ -4,15 +4,27 @@ import java.io.*;
 import java.net.Socket;
 
 public class Client {
+    private static Client client;
     private Socket             socket;
     private ObjectInputStream  in;
     private ObjectOutputStream out;
 
-    public Client(String host, int port) throws IOException {
+    private Client(String host, int port) throws IOException {
         socket = new Socket(host, port);
         out    = new ObjectOutputStream(socket.getOutputStream());
         out.flush();
         in = new ObjectInputStream(socket.getInputStream());
+    }
+
+    public static Client get(String host, int port) throws IOException {
+        if(client == null) {
+            client = new Client(host, port);
+        }
+        return client;
+    }
+
+    public static Client get() {
+        return client;
     }
 
     public String sendCommand(String cmd) throws IOException, ClassNotFoundException {
