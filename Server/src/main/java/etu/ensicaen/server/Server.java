@@ -1,9 +1,6 @@
 package etu.ensicaen.server;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ConcurrentHashMap;
@@ -29,63 +26,56 @@ public class Server {
 
     private void handleClient(Socket socket) {
         try (
-                // contenu du message client
-                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                // à envoyer au client
-                PrintWriter out = new PrintWriter(socket.getOutputStream(), true)
+                ObjectInputStream  objIn  = new ObjectInputStream(socket.getInputStream());
+                ObjectOutputStream objOut = new ObjectOutputStream(socket.getOutputStream())
         ) {
-            // lire message du client
-            String line = in.readLine();
-            if (line == null) return;
-
-            if ("HOST".equalsIgnoreCase(line)) {
-                Session session = new Session(socket);
-                sessions.put(session.getId(), session);
-                out.println("SESSION_ID:" + session.getId());
-                System.out.println("Created session " + session.getId());
-                relayMessages(session, socket);
-            }
-            else if (line.startsWith("JOIN:")) {
-                String id = line.substring(5);
-                Session session = sessions.get(id);
-                if (session != null && session.addGuest(socket)) {
-                    out.println("JOINED:" + id);
-                    System.out.println("Client joined session " + id);
-                    relayMessages(session, socket);
+            Object cmd = objIn.readObject();
+            if (cmd instanceof String) {
+                String line = ((String) cmd).trim();
+                if ("HOST".equalsIgnoreCase(line)) {
+                    Session session = new Session(socket);
+                    sessions.put(session.getId(), session);
+                    objOut.writeObject("SESSION_ID:" + session.getId());
+                    System.out.println("Created session " + session.getId());
+                    relay(session, socket, objIn, objOut);
+                }
+                else if (line.toUpperCase().startsWith("JOIN:")) {
+                    String id = line.substring(5).trim();
+                    Session session = sessions.get(id);
+                    if (session != null && session.addGuest(socket)) {
+                        objOut.writeObject("JOINED:" + id);
+                        System.out.println("Client joined session " + id);
+                        relay(session, socket, objIn, objOut);
+                    }
+                    else {
+                        objOut.writeObject("ERROR:Invalid session or full");
+                    }
                 }
                 else {
-                    out.println("ERROR:Invalid session or full");
-                    socket.close();
+                    objOut.writeObject("ERROR:Unknown command");
                 }
             }
-            else {
-                out.println("ERROR:Unknown command");
-                socket.close();
-            }
-        }
-        catch (IOException e) {
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
 
-    private void relayMessages(Session session, Socket socket) {
-        try (
-                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))
-        ) {
-            String msg;
-            while ((msg = in.readLine()) != null) {
+    private void relay(Session session, Socket socket,
+                       ObjectInputStream in, ObjectOutputStream out) {
+        try {
+            Object obj;
+            while ((obj = in.readObject()) != null) {
                 Socket other = session.getOther(socket);
                 if (other != null) {
-                    PrintWriter otherOut = new PrintWriter(other.getOutputStream(), true);
-                    otherOut.println(msg);
+                    ObjectOutputStream otherOut =
+                            new ObjectOutputStream(other.getOutputStream());
+                    otherOut.writeObject(obj);
                 }
             }
         }
-        catch (IOException e) {
+        catch (IOException | ClassNotFoundException ignored) {
             // ignore
         }
-        finally {
-            System.out.println("Client disconnected from session " + session.getId());
-        }
+        System.out.println("Disconnected from session " + session.getId());
     }
 }

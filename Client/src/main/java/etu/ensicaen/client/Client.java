@@ -11,7 +11,8 @@ public class Client {
     public Client(String host, int port) throws IOException {
         socket = new Socket(host, port);
         out    = new ObjectOutputStream(socket.getOutputStream());
-        in     = new ObjectInputStream (socket.getInputStream());
+        out.flush();
+        in = new ObjectInputStream(socket.getInputStream());
     }
 
     public String sendCommand(String cmd) throws IOException, ClassNotFoundException {
