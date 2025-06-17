@@ -57,7 +57,7 @@ public class GameBoard {
             throw new IllegalArgumentException("Seeds to distribute cannot be zero.");
         }
 
-        Node nextNode = startNode.getNext();
+        Node nextNode = startNode;
         while (seedsToDistribute > 0) {
             nextNode = nextNode.getNext();
             if (nextNode != startNode) { //skip the tile where seeds were taken (rule 5)

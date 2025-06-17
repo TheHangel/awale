@@ -1,9 +1,6 @@
 package etu.ensicaen.shared;
 
-import etu.ensicaen.shared.models.GameBoard;
-import etu.ensicaen.shared.models.Node;
-import etu.ensicaen.shared.models.Player;
-import etu.ensicaen.shared.models.Tile;
+import etu.ensicaen.shared.models.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -67,5 +64,65 @@ public class GameBoardTest {
 
         assertEquals(4, taken, "Should take all 4 seeds");
         assertEquals(0, node.getTile().getSeeds(), "Tile should now have 0 seeds");
+    }
+
+    @Test
+    void testDistributeSeeds() {
+        Node startNode = gameBoard.getNodeAt(0);
+        Player player = startNode.getTile().getOwner();
+        int initialSeeds = startNode.getTile().getSeeds();
+
+        assertEquals(4, initialSeeds, "Start tile should have 4 seeds before distribution");
+
+        gameBoard.distributeSeeds(0, player);
+
+        // Check that seeds were distributed correctly
+        for (int i = 1; i < 5; i++) {
+            Node node = gameBoard.getNodeAt(i);
+            assertEquals(5, node.getTile().getSeeds(), "Next four tiles should have 5 seeds after distribution");
+        }
+        for(int i = 5; i < GameBoard.BOARD_SIZE; i++) {
+            Node node = gameBoard.getNodeAt(i);
+            assertEquals(4, node.getTile().getSeeds(), "Remaining tiles should still have 4 seeds");
+        }
+        assertEquals(0, startNode.getTile().getSeeds(), "Start tile should have 0 seeds after distribution");
+    }
+
+    @Test
+    void testDistributeFromOpponentTileThrows() {
+        int opponentIndex = GameBoard.BOARD_SIZE / 2;
+        Player currentPlayer = gameBoard.getNodeAt(0).getTile().getOwner();
+
+        assertNotEquals(currentPlayer, gameBoard.getNodeAt(opponentIndex).getTile().getOwner());
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            gameBoard.distributeSeeds(opponentIndex, currentPlayer);
+        }, "Should not allow player to distribute seeds from opponent's tile");
+    }
+
+    @Test
+    void testDistributeFromEmptyTileThrows() {
+        int index = 0;
+        Player player = gameBoard.getNodeAt(index).getTile().getOwner();
+        gameBoard.getNodeAt(index).getTile().takeAllSeeds();
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            gameBoard.distributeSeeds(index, player);
+        }, "Should not allow distributing seeds from an empty tile");
+    }
+
+    @Test
+    void testStartTileIsSkippedDuringDistribution() {
+        int index = 0;
+        Player player = gameBoard.getNodeAt(index).getTile().getOwner();
+        Node startNode = gameBoard.getNodeAt(index);
+        startNode.getTile().setSeeds(18); //more than a full round
+
+        gameBoard.distributeSeeds(index, player);
+
+        assertEquals(0, startNode.getTile().getSeeds(),
+                "Start tile must be empty after sowing, even if full round");
+        assertEquals(6, startNode.getNext().getTile().getSeeds(),
+                "Tile next to start must have 2 more seeds after full round");
     }
 }
