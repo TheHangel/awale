@@ -6,13 +6,19 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-
-public class ClientApplication  extends Application {
-
-     @Override
+public class ClientApplication extends Application {
+    @Override
     public void start(Stage stage) throws IOException {
-         ViewHandler vh = new ViewHandler(stage);
-         vh.openMainMenu();
+        Client.get("localhost", 12345);
+        stage.setOnCloseRequest(ev -> {
+            try {
+                Client.get().close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        ViewHandler vh = new ViewHandler(stage);
+        vh.openMainMenu();
     }
 
     public static void main(String[] args) {

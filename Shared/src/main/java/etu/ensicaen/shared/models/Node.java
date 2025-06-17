@@ -1,6 +1,8 @@
 package etu.ensicaen.shared.models;
 
-public class Node {
+import java.io.Serializable;
+
+public class Node implements Serializable {
     private final Tile tile;
     private Node next;
     private Node prev;

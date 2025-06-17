@@ -17,7 +17,7 @@
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <Button layoutX="110.0" layoutY="43.0" mnemonicParsing="false" text="Host / Héberger" />
+                    <Button layoutX="110.0" layoutY="43.0" mnemonicParsing="false" text="Host / Héberger" onAction="#onHostAction" />
                         <Button fx:id="playButton" layoutX="122.0" layoutY="141.0" mnemonicParsing="false" onAction="#onPlayAction" text="Play / Jouer" />
                         <Text layoutX="107.0" layoutY="102.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Waiting for players..." />
                      </children>
@@ -28,8 +28,8 @@
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <Button layoutX="209.0" layoutY="48.0" mnemonicParsing="false" text="Join / Rejoindre" />
-                        <TextField layoutX="30.0" layoutY="48.0" />
+                        <Button layoutX="209.0" layoutY="48.0" mnemonicParsing="false" text="Join / Rejoindre" onAction="#onJoinAction" />
+                        <TextField fx:id="sessionIdTextField" layoutX="30.0" layoutY="48.0" />
                         <Button layoutX="122.0" layoutY="150.0" mnemonicParsing="false" text="Play / Jouer" />
                         <Text layoutX="30.0" layoutY="44.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Insert id / Insérez l'id" />
                      </children>

@@ -21,4 +21,12 @@ public class MainMenuViewModel {
             e.printStackTrace();
         }
     }
+
+    public void onHost() {
+        this.model.host();
+    }
+
+    public void onJoin(String id) {
+        this.model.join(id);
+    }
 }

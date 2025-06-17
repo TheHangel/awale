@@ -1,9 +1,10 @@
 package etu.ensicaen.shared.models;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GameBoard {
+public class GameBoard implements Serializable {
     public static final int BOARD_SIZE = 12;
     public static final int SEEDS_NUMBER = 48;
 
