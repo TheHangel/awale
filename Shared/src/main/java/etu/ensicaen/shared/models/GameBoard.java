@@ -10,7 +10,7 @@ public class GameBoard implements Serializable {
 
     private final List<Node> board;
 
-    public GameBoard(Player player1, Player player2) {
+    public GameBoard(Player player1, Player player2) { //Rule 2
         //TODO custom exceptions
         if(BOARD_SIZE % 2 != 0) {
             throw new IllegalArgumentException("Board size must be even.");
@@ -45,5 +45,26 @@ public class GameBoard implements Serializable {
 
     public Node getNodeAt(int index) {
         return board.get(index % BOARD_SIZE);
+    }
+
+    public void distributeSeeds(int index, Player player) { //Rule 3
+        Node startNode = getNodeAt(index);
+        if (startNode.getTile().getOwner() != player) {
+            throw new IllegalArgumentException("Cannot distribute seeds from a tile that does not belong to the player.");
+        }
+
+        int seedsToDistribute = startNode.getTile().takeAllSeeds();
+        if (seedsToDistribute == 0) {
+            throw new IllegalArgumentException("Seeds to distribute cannot be zero.");
+        }
+
+        Node nextNode = startNode;
+        while (seedsToDistribute > 0) {
+            nextNode = nextNode.getNext();
+            if (nextNode != startNode) { //skip the tile where seeds were taken (rule 5)
+                nextNode.getTile().addSeed();
+                seedsToDistribute--;
+            }
+        }
     }
 }
