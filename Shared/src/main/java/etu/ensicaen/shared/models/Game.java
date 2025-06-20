@@ -31,6 +31,8 @@ public class Game implements Serializable {
 
     public GameBoard getGameBoard() { return gameBoard; }
 
+    public int playTurn(Player currentPlayer){return 0;}
+
     //TODO Check rule 6 avant de faire un coup (apelle une méthode de GameBoard, mais set le resultat dans un cache)
     //      -> si coup qui nourri, le joueur doit choisir parmis les case qui nourrissent (cases possibles dans un cache pour verif rapide)
     //      -> si aucun coup qui nourri, jeu s'arrete + joueur qui devait jouer capture toutes les graines

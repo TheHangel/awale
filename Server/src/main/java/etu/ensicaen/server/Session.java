@@ -51,7 +51,7 @@ public class Session {
         Game newGame = new Game(players[0], players[1]);
         this.games.add(newGame);
         Player currentPlayer = Math.random() < 0.5 ? players[0] : players[1];
-        int gameFinished = 0;
+        int gameFinished = 0; // 0 = game not finished, -1 = draw, 1 = victory //@TODO use enum instead of int
         while(gameFinished == 0) {
             gameFinished = newGame.playTurn(currentPlayer);
             newGame.getGameBoard();

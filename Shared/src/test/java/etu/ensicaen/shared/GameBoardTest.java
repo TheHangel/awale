@@ -186,7 +186,7 @@ public class GameBoardTest {
                 "Wrong capture result when distributing from index 9 with player1");
 
         int[] expectedSeeds = {2, 0, 0, 0, 0, 3, 2, 5, 0, 0, 2, 4};
-        for(int i = 0; i < seedDistrib.length; i++){
+        for(int i = 0; i < GameBoard.BOARD_SIZE; i++){
             assertEquals(gameBoard.getNodeAt(i).getTile().getSeeds(), expectedSeeds[i],
                     "Wrong number of seeds in tile at index " + i + " after capture");
         }
@@ -204,7 +204,7 @@ public class GameBoardTest {
                 "Wrong capture result when distributing from index 9 with player1");
 
         int[] expectedSeeds = {2, 0, 0, 0, 0, 3, 9, 3, 2, 4, 3, 0};
-        for(int i = 0; i < seedDistrib.length; i++){
+        for(int i = 0; i < GameBoard.BOARD_SIZE; i++){
             assertEquals(gameBoard.getNodeAt(i).getTile().getSeeds(), expectedSeeds[i],
                     "Wrong number of seeds in tile at index " + i + " after capture");
         }
@@ -220,5 +220,83 @@ public class GameBoardTest {
 
         assertEquals(gameBoard.captureSeeds(0, player1), 0,
                 "Wrong capture result when distributing from index 0 with player1");
+    }
+
+    @Test
+    void testTakeRemainingSeeds() {
+        //test setup
+        int[] seedDistrib = {2, 1, 0, 2, 4, 3, 9, 3, 2, 4, 3, 0};
+        for (int i = 0; i < seedDistrib.length; i++) {
+            gameBoard.getNodeAt(i).getTile().setSeeds(seedDistrib[i]);
+        }
+
+        assertEquals(gameBoard.takeRemainingSeeds(), 33,
+                "Wrong number of seeds taken when taking remaining seeds");
+
+        //check if removed all seeds
+        for (int i = 0; i < GameBoard.BOARD_SIZE; i++) {
+            assertEquals(gameBoard.getNodeAt(i).getTile().getSeeds(), 0,
+                    "Wrong number of seeds in tile at index " + i + " after taking remaining seeds");
+        }
+    }
+
+    @Test
+    void testTakeRemainingSeedsNone() {
+        //test setup
+        int[] seedDistrib = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+        for (int i = 0; i < seedDistrib.length; i++) {
+            gameBoard.getNodeAt(i).getTile().setSeeds(seedDistrib[i]);
+        }
+
+        assertEquals(gameBoard.takeRemainingSeeds(), 0,
+                "Should return 0 when no seeds left to take");
+    }
+
+    @Test
+    void testGetPossibleMoves() {
+        //test setup
+        int[] seedDistrib = {9, 4, 6, 1, 2, 1, 0, 0, 0, 0, 0, 0};
+        for (int i = 0; i < seedDistrib.length; i++) {
+            gameBoard.getNodeAt(i).getTile().setSeeds(seedDistrib[i]);
+        }
+
+        assertEquals(gameBoard.getPossibleMoves(player1), List.of(0, 2, 4, 5),
+                "Error when checking possible moves for player1, should return indices 0, 2, 4 and 5");
+    }
+
+    @Test
+    void testGetPossibleMovesOponentNotHungry() {
+        //test setup
+        int[] seedDistrib = {1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0};
+        for (int i = 0; i < seedDistrib.length; i++) {
+            gameBoard.getNodeAt(i).getTile().setSeeds(seedDistrib[i]);
+        }
+
+        assertEquals(gameBoard.getPossibleMoves(player1), List.of(0, 1, 2, 3, 4),
+                "Should return 4 possible moves for player1 when opponent is not hungry");
+    }
+
+    @Test
+    void testGetPossibleMovesNoMoves() {
+        //test setup
+        int[] seedDistrib = {1, 3, 1, 2, 1, 0, 0, 0, 0, 0, 0, 0};
+        for (int i = 0; i < seedDistrib.length; i++) {
+            gameBoard.getNodeAt(i).getTile().setSeeds(seedDistrib[i]);
+        }
+
+        assertEquals(gameBoard.getPossibleMoves(player1), List.of(),
+                "Should return no possible moves for player1 when all tiles are empty or opponent's tiles");
+    }
+
+    @Test
+    void testGetPossibleMovesStarving() {
+        //test setup
+        int[] seedDistrib = {0, 0, 0, 0, 0, 2, 1, 2, 0, 0, 0, 0};
+        for (int i = 0; i < seedDistrib.length; i++) {
+            gameBoard.getNodeAt(i).getTile().setSeeds(seedDistrib[i]);
+        }
+
+        assertEquals(gameBoard.getPossibleMoves(player1), List.of(5),
+                "Error when checking possible moves for player1, should return only index 5");
     }
 }

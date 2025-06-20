@@ -91,6 +91,7 @@ public class GameBoard implements Serializable {
         return score;
     }
 
+    //on a board that as all the seeds moods
     public boolean willCaptureEverything(int startNodeIdx, Player player){ // handles rule 7
         GameBoard boardCopy = new GameBoard(this);
         boardCopy.captureSeeds(startNodeIdx, player); // simulate capture
@@ -120,8 +121,44 @@ public class GameBoard implements Serializable {
         return capturedSeeds;
     }
 
-    //TODO method pour simuler tout les coups possibles (règle 6) et renvoie ceux qui nourissent
+    public ArrayList<Integer> getPossibleMoves(Player player) { //checks rule 6
+        ArrayList<Integer> possibleMoves = new ArrayList<>();
+        boolean opponentHasSeeds = this.opponentHasSeeds(player);
 
-    //TODO methode pour "captuer" et obtenir le nombre de graines restantes (fin de partie, abandon, etc.)
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            Tile tile = this.getNodeAt(i).getTile();
+            if(tile.getOwner() == player && tile.getSeeds() > 0) { //every tile they can choose from
+                if(opponentHasSeeds){
+                    possibleMoves.add(i);
+                }
+                else{
+                    //if the opponent has no seeds, only allow moves that gives seeds to the opponnent
+                    GameBoard boardCopy = new GameBoard(this);
+                    boardCopy.distributeSeeds(i, player);
+                    if(boardCopy.opponentHasSeeds(player)) {
+                        possibleMoves.add(i);
+                    }
+                }
+            }
+        }
+        return possibleMoves;
+    }
+
+    private boolean opponentHasSeeds(Player currentPlayer) {
+        for (Node node : board) {
+            if (node.getTile().getOwner() != currentPlayer && node.getTile().getSeeds() > 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public int takeRemainingSeeds() { //handles rule 8
+        int totalSeeds = 0;
+        for (Node node : board) {
+            totalSeeds += node.getTile().takeAllSeeds();
+        }
+        return totalSeeds;
+    }
 }
 //TODO replace index by Node in methods ?
