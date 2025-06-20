@@ -39,6 +39,23 @@ public class GameBoard implements Serializable {
         }
     }
 
+    private GameBoard(GameBoard other) {
+        this.board = new ArrayList<>(other.board.size());
+        for (Node node : other.board) {
+            this.board.add(new Node(new Tile(node.getTile().getSeeds(), node.getTile().getOwner())));
+        }
+
+        // Link nodes together (circular double linked list style)
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            Node current = this.board.get(i);
+            Node next = this.board.get((i + 1) % BOARD_SIZE);
+            Node prev = this.board.get((i - 1 + BOARD_SIZE) % BOARD_SIZE);
+
+            current.setNext(next);
+            current.setPrev(prev);
+        }
+    }
+
     public List<Node> getBoard() {
         return board;
     }
@@ -47,7 +64,8 @@ public class GameBoard implements Serializable {
         return board.get(index % BOARD_SIZE);
     }
 
-    public void distributeSeeds(int index, Player player) { //Rule 3
+    public int distributeSeeds(int index, Player player) { //Rule 3
+        int score = 0;
         Node startNode = getNodeAt(index);
         if (startNode.getTile().getOwner() != player) {
             throw new IllegalArgumentException("Cannot distribute seeds from a tile that does not belong to the player.");
@@ -66,5 +84,43 @@ public class GameBoard implements Serializable {
                 seedsToDistribute--;
             }
         }
+
+        if(! willCaptureEverything(index, player)) { // rule 7 : if the move captures all seeds, do not capture anything
+            return captureSeeds(index, player);
+        }
+        return score;
     }
+
+    public boolean willCaptureEverything(int startNodeIdx, Player player){ // handles rule 7
+        GameBoard boardCopy = new GameBoard(this);
+        boardCopy.captureSeeds(startNodeIdx, player); // simulate capture
+
+        int seedsRemaining = 0;
+        for (Node node : boardCopy.getBoard()) {
+            if (node.getTile().getOwner() != player) { // Check opponent's tiles
+                seedsRemaining+= node.getTile().getSeeds();
+            }
+        }
+        return seedsRemaining == 0;
+    }
+
+    public int captureSeeds(int index, Player player) { // handles rule 4
+        Node currentNode = getNodeAt(index);
+        if (currentNode.getTile().getOwner() != player) {
+            throw new IllegalArgumentException("Cannot capture seeds from a tile that does not belong to the player.");
+        }
+
+        int capturedSeeds = 0;
+        while(currentNode.getTile().getSeeds() == 2 || currentNode.getTile().getSeeds() == 3
+                && currentNode.getTile().getOwner() == player) {
+            capturedSeeds += currentNode.getTile().takeAllSeeds();
+            currentNode = currentNode.getPrev();
+        }
+        return capturedSeeds;
+    }
+
+    //TODO method pour simuler tout les coups possibles (règle 6) et renvoie ceux qui nourissent
+
+    //TODO methode pour "captuer" et obtenir le nombre de graines restantes (fin de partie, abandon, etc.)
 }
+//TODO replace index by Node in methods ?

@@ -10,8 +10,8 @@ public class PlayerScore implements Comparable<PlayerScore>, Serializable {
         this.player = p;
     }
 
-    public void increase() {
-        this.score++;
+    public void increase(int value) {
+        this.score+= value;
     }
 
     public Player getPlayer() {
