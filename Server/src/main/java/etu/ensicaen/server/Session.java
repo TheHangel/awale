@@ -1,54 +1,70 @@
 package etu.ensicaen.server;
 
+import etu.ensicaen.shared.models.Game;
 import etu.ensicaen.shared.models.Player;
-import etu.ensicaen.shared.models.PlayerScore;
 
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.UUID;
 
 public class Session {
     private final String id;
     private final Socket hostSocket;
     private       Socket guestSocket;
+    private final Player[] players = new Player[2];
 
-    private ArrayList<Player>      players;
-    private ArrayList<PlayerScore> scores;
+    private Game currentGame;
+    private ObjectOutputStream hostOut;
+    private ObjectOutputStream guestOut;
 
     public Session(Socket hostSocket) {
         this.id = UUID.randomUUID().toString().substring(0, 8);
-        this.players = new ArrayList<>();
-        this.scores  = new ArrayList<>();
-
-        Player hostPlayer = new Player("name player 1"); // @todo send custom username
-        // add the host (who created the session) to the session
-        this.players.add(hostPlayer);
-        this.scores.add(new PlayerScore(hostPlayer));
         this.hostSocket = hostSocket;
+        this.players[0] = new Player("Player 1");
     }
 
-    public String getId() {
-        return id;
-    }
+    public String getId() { return id; }
 
     public synchronized boolean addGuest(Socket socket) {
         if (guestSocket == null) {
             guestSocket = socket;
-            Player hostPlayer = new Player("name player 2"); // @todo send custom username
-            this.players.add(hostPlayer);
-            this.scores.add(new PlayerScore(hostPlayer));
+            this.players[1] = new Player("Player 2");
             return true;
         }
         return false;
     }
 
-    public boolean isFull() {
-        return hostSocket != null && guestSocket != null;
+    public synchronized Game getOrCreateGame() {
+        if (currentGame == null) {
+            currentGame = new Game(players[0], players[1]);
+        }
+        return currentGame;
     }
 
-    public Socket getOther(Socket s) {
-        if (s == hostSocket) return guestSocket;
-        if (s == guestSocket) return hostSocket;
-        return null;
+    public synchronized void setHostStream(ObjectOutputStream out) {
+        this.hostOut = out;
+    }
+
+    public synchronized void setGuestStream(ObjectOutputStream out) {
+        this.guestOut = out;
+    }
+
+    public synchronized void broadcastGame() throws IOException {
+        Game g = getOrCreateGame();
+        if (hostOut != null) {
+            hostOut.reset();
+            hostOut.writeUnshared(g);
+            hostOut.flush();
+        }
+        if (guestOut != null) {
+            guestOut.reset();
+            guestOut.writeUnshared(g);
+            guestOut.flush();
+        }
+    }
+
+    public boolean isFull() {
+        return hostSocket != null && guestSocket != null;
     }
 }

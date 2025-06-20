@@ -1,37 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
 <AnchorPane prefHeight="727.0" prefWidth="1380.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="etu.ensicaen.client.views.GameView">
    <children>
       <GridPane prefHeight="727.0" prefWidth="1380.0">
         <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="25.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="25.0" prefWidth="100.0" />
         </columnConstraints>
         <rowConstraints>
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" percentHeight="25.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" percentHeight="50.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" percentHeight="25.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Text" GridPane.rowIndex="1" />
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Text" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-            <ImageView fitHeight="198.0" fitWidth="478.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="1">
-               <image>
-                  <Image url="@assets/awale-board.jpg" />
-               </image>
-            </ImageView>
-            <Button mnemonicParsing="false" onAction="#onBackAction" text="Quit / Quitter" />
-            <GridPane fx:id="boardGrid" GridPane.columnIndex="1" GridPane.rowIndex="1">
+            <Button mnemonicParsing="false" onAction="#onBackAction" text="Quit / Abandonner" />
+            <GridPane GridPane.columnIndex="1" GridPane.rowIndex="1">
               <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -44,7 +37,60 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
+               <children>
+                  <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Button" />
+                  <Button fx:id="tile10" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false"  GridPane.columnIndex="1" />
+                  <Button fx:id="tile11" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false"  />
+                  <Button fx:id="tile9" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" GridPane.columnIndex="2" />
+                  <Button fx:id="tile8" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" GridPane.columnIndex="3" />
+                  <Button fx:id="tile0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" GridPane.rowIndex="1" />
+                  <Button fx:id="tile1" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <Button fx:id="tile2" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                  <Button fx:id="tile3" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                  <Button fx:id="tile7" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" GridPane.columnIndex="4" />
+                  <Button fx:id="tile4" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+                  <Button fx:id="tile6" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" GridPane.columnIndex="5" />
+                  <Button fx:id="tile5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" GridPane.columnIndex="5" GridPane.rowIndex="1" />
+               </children>
             </GridPane>
+            <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
+               <children>
+                  <Text fx:id="playerNameRightText" strokeType="OUTSIDE" strokeWidth="0.0" text="Text">
+                     <font>
+                        <Font size="26.0" />
+                     </font>
+                  </Text>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text=" : ">
+                     <font>
+                        <Font size="26.0" />
+                     </font>
+                  </Text>
+                  <Text fx:id="playerScoreRightText" strokeType="OUTSIDE" strokeWidth="0.0" text="Text">
+                     <font>
+                        <Font size="26.0" />
+                     </font>
+                  </Text>
+               </children>
+            </HBox>
+            <HBox prefHeight="100.0" prefWidth="200.0" GridPane.rowIndex="1">
+               <children>
+                  <Text fx:id="playerNameLeftText" strokeType="OUTSIDE" strokeWidth="0.0" text="Text">
+                     <font>
+                        <Font size="26.0" />
+                     </font>
+                  </Text>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text=" : ">
+                     <font>
+                        <Font size="26.0" />
+                     </font>
+                  </Text>
+                  <Text fx:id="playerScoreLeftText" strokeType="OUTSIDE" strokeWidth="0.0" text="Text">
+                     <font>
+                        <Font size="26.0" />
+                     </font>
+                  </Text>
+               </children>
+            </HBox>
          </children>
       </GridPane>
    </children>
