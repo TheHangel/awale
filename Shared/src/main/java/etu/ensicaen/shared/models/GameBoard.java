@@ -104,15 +104,16 @@ public class GameBoard implements Serializable {
         return seedsRemaining == 0;
     }
 
+    //doesn't check for rule 7
     public int captureSeeds(int index, Player player) { // handles rule 4
         Node currentNode = getNodeAt(index);
-        if (currentNode.getTile().getOwner() != player) {
-            throw new IllegalArgumentException("Cannot capture seeds from a tile that does not belong to the player.");
+        if (currentNode.getTile().getOwner() == player) {
+            return 0; // Don't capture seeds from a tile that belongs to the player
         }
 
         int capturedSeeds = 0;
         while(currentNode.getTile().getSeeds() == 2 || currentNode.getTile().getSeeds() == 3
-                && currentNode.getTile().getOwner() == player) {
+                && currentNode.getTile().getOwner() != player) {
             capturedSeeds += currentNode.getTile().takeAllSeeds();
             currentNode = currentNode.getPrev();
         }

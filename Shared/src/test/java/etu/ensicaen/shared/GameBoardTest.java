@@ -125,4 +125,100 @@ public class GameBoardTest {
         assertEquals(6, startNode.getNext().getTile().getSeeds(),
                 "Tile next to start must have 2 more seeds after full round");
     }
+
+    @Test
+    void testWillCaptureEverythingTrue() {
+        //test setup
+        int[] seedDistrib = {0, 0, 0, 0, 5, 0, 2, 2, 3, 2, 0, 0};
+        for (int i = 0; i < seedDistrib.length; i++) {
+            gameBoard.getNodeAt(i).getTile().setSeeds(seedDistrib[i]);
+        }
+
+        assertTrue(gameBoard.willCaptureEverything(9, player1),
+                "Should capture everything when distributing from index 9 with player1");
+    }
+
+    @Test
+    void testWillCaptureEverythingTrueFilled() {
+        //test setup
+        int[] seedDistrib = {6, 0, 0, 0, 0, 0, 2, 3, 2, 2, 3, 2};
+        for (int i = 0; i < seedDistrib.length; i++) {
+            gameBoard.getNodeAt(i).getTile().setSeeds(seedDistrib[i]);
+        }
+
+        assertTrue(gameBoard.willCaptureEverything(11, player1),
+                "Should capture everything when distributing from index 11 with player1");
+    }
+
+    @Test
+    void testWillCaptureEverythingFalse() {
+        //test setup
+        int[] seedDistrib = {2, 0, 0, 0, 0, 0, 1, 1, 3, 2, 0, 0};
+        for (int i = 0; i < seedDistrib.length; i++) {
+            gameBoard.getNodeAt(i).getTile().setSeeds(seedDistrib[i]);
+        }
+
+        assertFalse(gameBoard.willCaptureEverything(9, player1),
+                "Should capture everything when distributing from index 9 with player1");
+    }
+
+    @Test
+    void testWillCaptureEverythingFalseFilled() {
+        //test setup
+        int[] seedDistrib = {2, 0, 0, 0, 0, 0, 2, 2, 5, 4, 3, 2};
+        for (int i = 0; i < seedDistrib.length; i++) {
+            gameBoard.getNodeAt(i).getTile().setSeeds(seedDistrib[i]);
+        }
+
+        assertFalse(gameBoard.willCaptureEverything(11, player1),
+                "Should capture everything when distributing from index 11 with player1");
+    }
+
+    @Test
+    void testCaptureSeeds() {
+        //test setup
+        int[] seedDistrib = {2, 0, 0, 0, 0, 3, 2, 5, 3, 2, 2, 4};
+        for (int i = 0; i < seedDistrib.length; i++) {
+            gameBoard.getNodeAt(i).getTile().setSeeds(seedDistrib[i]);
+        }
+
+        assertEquals(gameBoard.captureSeeds(9, player1), 5,
+                "Wrong capture result when distributing from index 9 with player1");
+
+        int[] expectedSeeds = {2, 0, 0, 0, 0, 3, 2, 5, 0, 0, 2, 4};
+        for(int i = 0; i < seedDistrib.length; i++){
+            assertEquals(gameBoard.getNodeAt(i).getTile().getSeeds(), expectedSeeds[i],
+                    "Wrong number of seeds in tile at index " + i + " after capture");
+        }
+    }
+
+    @Test
+    void testCaptureSeedsNoCapture() {
+        //test setup
+        int[] seedDistrib = {2, 0, 0, 0, 0, 3, 9, 3, 2, 4, 3, 0};
+        for (int i = 0; i < seedDistrib.length; i++) {
+            gameBoard.getNodeAt(i).getTile().setSeeds(seedDistrib[i]);
+        }
+
+        assertEquals(gameBoard.captureSeeds(9, player1), 0,
+                "Wrong capture result when distributing from index 9 with player1");
+
+        int[] expectedSeeds = {2, 0, 0, 0, 0, 3, 9, 3, 2, 4, 3, 0};
+        for(int i = 0; i < seedDistrib.length; i++){
+            assertEquals(gameBoard.getNodeAt(i).getTile().getSeeds(), expectedSeeds[i],
+                    "Wrong number of seeds in tile at index " + i + " after capture");
+        }
+    }
+
+    @Test
+    void testCaptureSeedsOnOwnSide() {
+        //test setup
+        int[] seedDistrib = {2, 0, 0, 0, 0, 3, 9, 3, 2, 4, 3, 0};
+        for (int i = 0; i < seedDistrib.length; i++) {
+            gameBoard.getNodeAt(i).getTile().setSeeds(seedDistrib[i]);
+        }
+
+        assertEquals(gameBoard.captureSeeds(0, player1), 0,
+                "Wrong capture result when distributing from index 0 with player1");
+    }
 }
