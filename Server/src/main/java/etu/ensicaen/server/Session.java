@@ -2,10 +2,11 @@ package etu.ensicaen.server;
 
 import etu.ensicaen.shared.models.Game;
 import etu.ensicaen.shared.models.Player;
-
+import etu.ensicaen.shared.models.PlayerScore;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.UUID;
 
 public class Session {
@@ -67,4 +68,25 @@ public class Session {
     public boolean isFull() {
         return hostSocket != null && guestSocket != null;
     }
+
+    public boolean startGame() { //TODO : test with mock GameBoard
+        Game newGame = new Game(players[0], players[1]);
+        Player currentPlayer = Math.random() < 0.5 ? players[0] : players[1];
+        int gameFinished = 0; // 0 = game not finished, -1 = draw, 1 = victory //@TODO use enum instead of int
+        while(gameFinished == 0) {
+            gameFinished = newGame.playTurn(currentPlayer);
+            newGame.getGameBoard();
+            //TODO send gameBoard to clients for them to display it
+            //switch player
+            currentPlayer = (currentPlayer == players[0]) ? players[1] : players[0];
+        }
+        if (gameFinished == -1) {
+            //TODO send draw message to both players
+        } else if (gameFinished == 1) {
+            //TODO send victory message to currentPlayer
+            //TODO send defeat message to the other player
+        }
+        return true;
+    }
+
 }

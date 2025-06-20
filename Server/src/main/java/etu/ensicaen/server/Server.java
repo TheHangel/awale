@@ -95,7 +95,7 @@ public class Server {
                             int index = Integer.parseInt(indexStr);
                             Game game = session.getOrCreateGame();
                             game.getGameBoard().getBoard().get(index).getTile().addSeed();
-                            game.getPlayerScores()[0].increase();
+                            game.getPlayerScores()[0].increase(1);
                             session.broadcastGame();
                         }
                         else {
