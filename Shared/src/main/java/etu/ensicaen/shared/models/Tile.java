@@ -1,8 +1,12 @@
 package etu.ensicaen.shared.models;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 public class Tile implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     private int seeds;
     private final Player owner;
 

@@ -1,8 +1,12 @@
 package etu.ensicaen.shared.models;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 public class Game implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     private final Player[] players = new Player[2];
     private final PlayerScore[] playerScores = new PlayerScore[2];
     private final GameBoard gameBoard;
@@ -24,12 +28,12 @@ public class Game implements Serializable {
         //handle game board
         this.gameBoard = new GameBoard(player1, player2);
     }
+    public Player[] getPlayers() { return players; }
 
-    public PlayerScore[] getPlayerScores() {
-        return playerScores;
-    }
+    public PlayerScore[] getPlayerScores() { return playerScores; }
 
     public GameBoard getGameBoard() { return gameBoard; }
+
 
     public int playTurn(Player currentPlayer){return 0;}
 

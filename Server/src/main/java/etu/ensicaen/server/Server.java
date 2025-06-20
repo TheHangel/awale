@@ -1,5 +1,6 @@
 package etu.ensicaen.server;
 
+import etu.ensicaen.shared.models.Game;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -8,8 +9,12 @@ import java.util.concurrent.ConcurrentMap;
 
 public class Server {
     private static Server server;
-    private ServerSocket serverSocket;
-    private final ConcurrentMap<String, Session> sessions = new ConcurrentHashMap<>();
+    private final ServerSocket serverSocket;
+
+    // link <id session> to <session>
+    private final ConcurrentMap<String,Session> sessions       = new ConcurrentHashMap<>();
+    // link client <socket>, to server <session>
+    private final ConcurrentMap<Socket, Session> socketSessions = new ConcurrentHashMap<>();
 
     private Server(int port) throws IOException {
         serverSocket = new ServerSocket(port);
@@ -34,56 +39,83 @@ public class Server {
 
     private void handleClient(Socket socket) {
         try (
-                ObjectInputStream  objIn  = new ObjectInputStream(socket.getInputStream());
-                ObjectOutputStream objOut = new ObjectOutputStream(socket.getOutputStream())
+                ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+                ObjectInputStream  in  = new ObjectInputStream(socket.getInputStream())
         ) {
-            Object cmd = objIn.readObject();
-            if (cmd instanceof String) {
-                String line = ((String) cmd).trim();
-                if ("HOST".equalsIgnoreCase(line)) {
-                    Session session = new Session(socket);
-                    sessions.put(session.getId(), session);
-                    objOut.writeObject("SESSION_ID:" + session.getId());
-                    System.out.println("Created session " + session.getId());
-                    relay(session, socket, objIn, objOut);
-                }
-                else if (line.toUpperCase().startsWith("JOIN:")) {
-                    String id = line.substring(5).trim();
-                    Session session = sessions.get(id);
-                    if (session != null && session.addGuest(socket)) {
-                        objOut.writeObject("JOINED:" + id);
-                        System.out.println("Client joined session " + id);
-                        relay(session, socket, objIn, objOut);
+            out.flush();
+            while (true) {
+                Object obj = in.readObject();
+                if (obj instanceof String) {
+                    String line = ((String) obj).trim();
+
+                    if ("HOST".equalsIgnoreCase(line)) {
+                        // session creation
+                        Session s = new Session(socket);
+                        sessions.put(s.getId(), s);
+                        socketSessions.put(socket, s);
+                        out.writeObject("SESSION_ID:" + s.getId());
+                        out.flush();
+                        s.setHostStream(out);
+                    }
+                    else if (line.toUpperCase().startsWith("JOIN:")) {
+                        // join session
+                        String id = line.substring(5).trim();
+                        Session s = sessions.get(id);
+                        if (s != null && s.addGuest(socket)) {
+                            socketSessions.put(socket, s);
+                            out.writeObject("JOINED:" + id);
+                        }
+                        else {
+                            out.writeObject("ERROR:Invalid session or full");
+                        }
+                        out.flush();
+                        assert s != null;
+                        s.setGuestStream(out);
+                    }
+                    else if ("PLAY".equalsIgnoreCase(line)) {
+                        // PLAY command handled here
+                        Session session = socketSessions.get(socket);
+                        if (session != null) {
+                            out.flush();
+                            if (session.isFull()) {
+                                Game game = session.getOrCreateGame();
+                                out.writeObject(game);
+                                out.flush();
+                            }
+                        }
+                        else {
+                            out.writeObject("ERROR:Not in session");
+                            out.flush();
+                        }
+                    }
+                    else if(line.toUpperCase().startsWith("SELECT:")) {
+                        Session session = socketSessions.get(socket);
+                        if (session != null) {
+                            String indexStr = line.substring(7).trim();
+                            int index = Integer.parseInt(indexStr);
+                            Game game = session.getOrCreateGame();
+                            game.getGameBoard().getBoard().get(index).getTile().addSeed();
+                            game.getPlayerScores()[0].increase(1);
+                            session.broadcastGame();
+                        }
+                        else {
+                            out.writeObject("ERROR:Not in session");
+                            out.flush();
+                        }
                     }
                     else {
-                        objOut.writeObject("ERROR:Invalid session or full");
+                        // unknown command
+                        out.writeObject("ERROR:Unknown command");
+                        out.flush();
                     }
                 }
-                else {
-                    objOut.writeObject("ERROR:Unknown command");
-                }
             }
-        } catch (IOException | ClassNotFoundException e) {
+        }
+        catch (EOFException eof) {
+            // socket closed on client side, need to close it properly
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    private void relay(Session session, Socket socket,
-                       ObjectInputStream in, ObjectOutputStream out) {
-        try {
-            Object obj;
-            while ((obj = in.readObject()) != null) {
-                Socket other = session.getOther(socket);
-                if (other != null) {
-                    ObjectOutputStream otherOut =
-                            new ObjectOutputStream(other.getOutputStream());
-                    otherOut.writeObject(obj);
-                }
-            }
-        }
-        catch (IOException | ClassNotFoundException ignored) {
-            // ignore
-        }
-        System.out.println("Disconnected from session " + session.getId());
     }
 }

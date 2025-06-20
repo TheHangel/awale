@@ -5,6 +5,7 @@ import etu.ensicaen.client.views.MainMenuView;
 import etu.ensicaen.client.viewsmodels.GameViewModel;
 import etu.ensicaen.client.viewsmodels.MainMenuViewModel;
 import etu.ensicaen.shared.models.Game;
+import javafx.beans.property.BooleanProperty;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -31,13 +32,13 @@ public class ViewHandler {
         stage.show();
     }
 
-    public void openGame() throws IOException {
+    public void openGame(Game game, BooleanProperty isHost) throws IOException {
         FXMLLoader loader = new FXMLLoader(
                 getClass().getResource("/etu/ensicaen/client/game-view.fxml"));
 
         Parent root = loader.load();
         GameView controller = loader.getController();
-        controller.init(new GameViewModel(new Game(), this));
+        controller.init(new GameViewModel(game, this, isHost));
         stage.setScene(new Scene(root));
         stage.setTitle("Awale – Jeu");
     }

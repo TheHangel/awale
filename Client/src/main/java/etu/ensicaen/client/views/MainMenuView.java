@@ -19,6 +19,7 @@ public class MainMenuView {
 
     @FXML
     private void onPlayAction(ActionEvent actionEvent) throws IOException {
+        this.viewModel.onPlay();
     }
 
     public void onHostAction(ActionEvent actionEvent) throws IOException {

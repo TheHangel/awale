@@ -2,6 +2,9 @@ package etu.ensicaen.server;
 
 import etu.ensicaen.shared.models.Game;
 import etu.ensicaen.shared.models.Player;
+import etu.ensicaen.shared.models.PlayerScore;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -11,45 +14,63 @@ public class Session {
     private final Socket hostSocket;
     private       Socket guestSocket;
     private final Player[] players = new Player[2];
-    private ArrayList<Game> games;
+
+    private Game currentGame;
+    private ObjectOutputStream hostOut;
+    private ObjectOutputStream guestOut;
 
     public Session(Socket hostSocket) {
         this.id = UUID.randomUUID().toString().substring(0, 8);
-        this.games = new ArrayList<>();
-
-        Player hostPlayer = new Player("name player 1"); // @todo send custom username
-        // add the host (who created the session) to the session
-        this.players[0] = hostPlayer;
         this.hostSocket = hostSocket;
+        this.players[0] = new Player("Player 1");
     }
 
-    public String getId() {
-        return id;
-    }
+    public String getId() { return id; }
 
     public synchronized boolean addGuest(Socket socket) {
         if (guestSocket == null) {
             guestSocket = socket;
-            Player guestPlayer = new Player("name player 2"); // @todo send custom username
-            this.players[1]= guestPlayer;
+            this.players[1] = new Player("Player 2");
             return true;
         }
         return false;
+    }
+
+    public synchronized Game getOrCreateGame() {
+        if (currentGame == null) {
+            currentGame = new Game(players[0], players[1]);
+        }
+        return currentGame;
+    }
+
+    public synchronized void setHostStream(ObjectOutputStream out) {
+        this.hostOut = out;
+    }
+
+    public synchronized void setGuestStream(ObjectOutputStream out) {
+        this.guestOut = out;
+    }
+
+    public synchronized void broadcastGame() throws IOException {
+        Game g = getOrCreateGame();
+        if (hostOut != null) {
+            hostOut.reset();
+            hostOut.writeUnshared(g);
+            hostOut.flush();
+        }
+        if (guestOut != null) {
+            guestOut.reset();
+            guestOut.writeUnshared(g);
+            guestOut.flush();
+        }
     }
 
     public boolean isFull() {
         return hostSocket != null && guestSocket != null;
     }
 
-    public Socket getOther(Socket s) {
-        if (s == hostSocket) return guestSocket;
-        if (s == guestSocket) return hostSocket;
-        return null;
-    }
-
     public boolean startGame() { //TODO : test with mock GameBoard
         Game newGame = new Game(players[0], players[1]);
-        this.games.add(newGame);
         Player currentPlayer = Math.random() < 0.5 ? players[0] : players[1];
         int gameFinished = 0; // 0 = game not finished, -1 = draw, 1 = victory //@TODO use enum instead of int
         while(gameFinished == 0) {
