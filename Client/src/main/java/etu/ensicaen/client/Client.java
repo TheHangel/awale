@@ -1,5 +1,7 @@
 package etu.ensicaen.client;
 
+import etu.ensicaen.shared.models.Game;
+
 import java.io.*;
 import java.net.Socket;
 
@@ -41,8 +43,14 @@ public class Client {
         return this.sendCommand("JOIN:" + id);
     }
 
-    public void sendObject(Object obj) throws IOException {
-        out.writeObject(obj);
+    public Game play() throws IOException, ClassNotFoundException {
+        out.writeObject("PLAY");
+        return (Game) in.readObject();
+    }
+
+    public void select(int index) throws IOException, ClassNotFoundException {
+        out.writeObject("SELECT:" + index);
+        out.flush();
     }
 
     public Object readObject() throws IOException, ClassNotFoundException {
