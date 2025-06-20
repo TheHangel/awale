@@ -182,7 +182,7 @@ public class GameBoardTest {
             gameBoard.getNodeAt(i).getTile().setSeeds(seedDistrib[i]);
         }
 
-        assertEquals(gameBoard.captureSeeds(9, player1), 5,
+        assertEquals(5, gameBoard.captureSeeds(9, player1),
                 "Wrong capture result when distributing from index 9 with player1");
 
         int[] expectedSeeds = {2, 0, 0, 0, 0, 3, 2, 5, 0, 0, 2, 4};
@@ -200,7 +200,7 @@ public class GameBoardTest {
             gameBoard.getNodeAt(i).getTile().setSeeds(seedDistrib[i]);
         }
 
-        assertEquals(gameBoard.captureSeeds(9, player1), 0,
+        assertEquals(0, gameBoard.captureSeeds(9, player1),
                 "Wrong capture result when distributing from index 9 with player1");
 
         int[] expectedSeeds = {2, 0, 0, 0, 0, 3, 9, 3, 2, 4, 3, 0};
@@ -218,7 +218,7 @@ public class GameBoardTest {
             gameBoard.getNodeAt(i).getTile().setSeeds(seedDistrib[i]);
         }
 
-        assertEquals(gameBoard.captureSeeds(0, player1), 0,
+        assertEquals(0, gameBoard.captureSeeds(0, player1),
                 "Wrong capture result when distributing from index 0 with player1");
     }
 
@@ -230,12 +230,12 @@ public class GameBoardTest {
             gameBoard.getNodeAt(i).getTile().setSeeds(seedDistrib[i]);
         }
 
-        assertEquals(gameBoard.takeRemainingSeeds(), 33,
+        assertEquals(33, gameBoard.takeRemainingSeeds(),
                 "Wrong number of seeds taken when taking remaining seeds");
 
         //check if removed all seeds
         for (int i = 0; i < GameBoard.BOARD_SIZE; i++) {
-            assertEquals(gameBoard.getNodeAt(i).getTile().getSeeds(), 0,
+            assertEquals(0, gameBoard.getNodeAt(i).getTile().getSeeds(),
                     "Wrong number of seeds in tile at index " + i + " after taking remaining seeds");
         }
     }
@@ -248,7 +248,7 @@ public class GameBoardTest {
             gameBoard.getNodeAt(i).getTile().setSeeds(seedDistrib[i]);
         }
 
-        assertEquals(gameBoard.takeRemainingSeeds(), 0,
+        assertEquals(0, gameBoard.takeRemainingSeeds(),
                 "Should return 0 when no seeds left to take");
     }
 
