@@ -46,6 +46,7 @@ public class Client {
 
     public Game play() throws IOException, ClassNotFoundException {
         out.writeObject("PLAY");
+        out.flush();
         return (Game) in.readObject();
     }
 
@@ -71,7 +72,19 @@ public class Client {
     public Leaderboard leaderboard() throws IOException, ClassNotFoundException {
         out.writeObject("LEADERBOARD");
         out.flush();
-        return (Leaderboard) in.readObject();
+
+        try {
+            Object obj = in.readObject();
+            System.out.println("Received object: " + obj.getClass());
+            if (obj instanceof Leaderboard lb) {
+                return lb;
+            } else {
+                throw new IOException("Expected Leaderboard, got: " + obj.getClass());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     public void close() throws IOException {

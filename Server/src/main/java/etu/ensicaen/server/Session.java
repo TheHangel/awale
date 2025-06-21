@@ -1,6 +1,7 @@
 package etu.ensicaen.server;
 
 import etu.ensicaen.shared.models.Game;
+import etu.ensicaen.shared.models.Leaderboard;
 import etu.ensicaen.shared.models.Messages;
 import etu.ensicaen.shared.models.Player;
 import java.io.IOException;
@@ -9,7 +10,7 @@ import java.net.Socket;
 import java.util.UUID;
 
 public class Session {
-    private static final boolean test = false;
+    private static final boolean test = true;
     private final String id;
     private final Socket hostSocket;
     private       Socket guestSocket;
@@ -89,10 +90,10 @@ public class Session {
 
     private void setUpForTest() {
         this.currentGame.setCurrentPlayerIndex(0);
-        this.currentGame.getPlayerScores()[0].increase(0);
-        this.currentGame.getPlayerScores()[1].increase(0);
+        this.currentGame.getPlayerScores()[0].increase(23);
+        this.currentGame.getPlayerScores()[1].increase(3);
 
-        int[] seedDistrib = {0, 0, 0, 14, 0, 0, 0, 0, 0, 0, 0, 0}; //test skip tile
+        int[] seedDistrib = {6, 3, 4, 0, 1, 2, 1, 1, 1, 2, 2, 0}; //test win
         for (int i = 0; i < seedDistrib.length; i++) {
             this.currentGame.getGameBoard().getNodeAt(i).getTile().setSeeds(seedDistrib[i]);
         }
@@ -124,6 +125,15 @@ public class Session {
         this.checkGameStatus();
     }
 
+    private boolean handleLeaderboard(int currentPlayerIndex) {
+        //Handle Leaderboard
+        Leaderboard lb = Server.getLeaderboard();
+        boolean newPB = lb.isNewHighScore(this.currentGame.getPlayerScores()[currentPlayerIndex]);
+        lb.updateScore(this.currentGame.getPlayerScores()[currentPlayerIndex]);
+        Leaderboard.save(lb);
+        return newPB;
+    }
+
     public void checkGameStatus() throws IOException {
         int currentPlayerIndex = this.currentGame.getCurrentPlayerIndex();
         switch (this.currentGame.getGameState()) {
@@ -131,29 +141,35 @@ public class Session {
                 this.broadcast(Messages.DRAW_MESSAGE);
                 break;
             case WIN: {
+                boolean newPB = handleLeaderboard(currentPlayerIndex);
+
                 ObjectOutputStream currentPlayerOut = (currentPlayerIndex == 0) ? this.hostOut : this.guestOut;
-                this.broadcastTo(currentPlayerOut, Messages.WIN_MESSAGE);
+                this.broadcastTo(currentPlayerOut, newPB ? Messages.NEW_HIGH_SCORE : Messages.WIN_MESSAGE);
                 ObjectOutputStream otherPlayerOut = (currentPlayerIndex == 0) ? this.guestOut : this.hostOut;
                 this.broadcastTo(otherPlayerOut, Messages.LOST_MESSAGE);
                 break;
             }
             case LOSE: {
+                boolean newPB = handleLeaderboard((currentPlayerIndex+1)%2);
+
                 ObjectOutputStream currentPlayerOut = (currentPlayerIndex == 0) ? this.hostOut : this.guestOut;
                 this.broadcastTo(currentPlayerOut, Messages.LOST_MESSAGE);
                 ObjectOutputStream otherPlayerOut = (currentPlayerIndex == 0) ? this.guestOut : this.hostOut;
-                this.broadcastTo(otherPlayerOut, Messages.WIN_MESSAGE);
+                this.broadcastTo(otherPlayerOut, newPB ? Messages.NEW_HIGH_SCORE : Messages.WIN_MESSAGE);
                 break;
             }
             case ONGOING:
                 //switch player
-                currentPlayerIndex = (currentPlayerIndex + 1) % 2;
-                this.currentGame.setCurrentPlayerIndex(currentPlayerIndex);
+                this.currentGame.setCurrentPlayerIndex((currentPlayerIndex + 1) % 2);
                 //check rule 6
                 if (!this.currentGame.hasPossibleMoves(players[currentPlayerIndex])){
                     this.currentGame.handleNoMoreMoves(currentPlayerIndex);
 
+                    boolean newPB = handleLeaderboard(currentPlayerIndex);
+                    String winMessage = newPB ? Messages.NEW_HIGH_SCORE : Messages.WIN_MESSAGE;
+
                     ObjectOutputStream currentPlayerOut = (currentPlayerIndex == 0) ? this.hostOut : this.guestOut;
-                    this.broadcastTo(currentPlayerOut, Messages.WIN_MESSAGE + "\n" + Messages.CANT_FEED);
+                    this.broadcastTo(currentPlayerOut, winMessage + "\n" + Messages.CANT_FEED);
                     ObjectOutputStream otherPlayerOut = (currentPlayerIndex == 0) ? this.guestOut : this.hostOut;
                     this.broadcastTo(otherPlayerOut, Messages.LOST_MESSAGE + "\n" + Messages.CANT_FEED);
                 }
