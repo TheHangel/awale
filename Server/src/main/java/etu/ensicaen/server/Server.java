@@ -22,7 +22,7 @@ public class Server {
 
     public static Server get() throws IOException {
         if(server == null) {
-            server = new Server(12345);
+            server = new Server(Config.port());
         }
         return server;
     }

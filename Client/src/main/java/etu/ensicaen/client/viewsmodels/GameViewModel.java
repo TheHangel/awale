@@ -83,7 +83,7 @@ public class GameViewModel {
         new Thread(() -> {
             try {
                 Client.get().select(idx);
-            } catch (IOException | ClassNotFoundException ex) {
+            } catch (IOException ex) {
                 ex.printStackTrace();
             }
         }).start();
@@ -93,7 +93,7 @@ public class GameViewModel {
         new Thread(() -> {
             try {
                 Client.get().forfeit();
-            } catch (IOException | ClassNotFoundException ex) {
+            } catch (IOException ex) {
                 ex.printStackTrace();
             }
         }).start();
