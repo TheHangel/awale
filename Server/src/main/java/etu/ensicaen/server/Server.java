@@ -1,6 +1,7 @@
 package etu.ensicaen.server;
 
 import etu.ensicaen.shared.models.Leaderboard;
+import etu.ensicaen.shared.models.Messages;
 import etu.ensicaen.shared.models.Player;
 import etu.ensicaen.shared.models.PlayerScore;
 
@@ -24,6 +25,13 @@ public class Server {
     private Server(int port) throws IOException {
         serverSocket = new ServerSocket(port);
         System.out.println("Server started on port " + port);
+        PlayerScore ps = new PlayerScore(new Player("tes"));
+        ps.increase(2);
+        PlayerScore ps2 = new PlayerScore(new Player("tes"));
+        ps2.increase(3);
+
+        leaderboard.add(ps);
+        leaderboard.add(ps2);
     }
 
     public static Server get() throws IOException {
@@ -38,7 +46,9 @@ public class Server {
             // attente message client
             Socket clientSocket = serverSocket.accept();
             System.out.println("Client connected: " + clientSocket.getRemoteSocketAddress());
-            new Thread(() -> handleClient(clientSocket)).start();
+            new Thread(() -> {
+                handleClient(clientSocket);
+            }).start();
         }
     }
 
@@ -61,23 +71,20 @@ public class Server {
                         out.writeObject("SESSION_ID:" + s.getId());
                         out.flush();
                         s.setHostStream(out);
-                    }
-                    else if (line.toUpperCase().startsWith("JOIN:")) {
+                    } else if (line.toUpperCase().startsWith("JOIN:")) {
                         // join session
                         String id = line.substring(5).trim();
                         Session s = sessions.get(id);
                         if (s != null && s.addGuest(socket)) {
                             socketSessions.put(socket, s);
                             out.writeObject("JOINED:" + id);
-                        }
-                        else {
+                        } else {
                             out.writeObject("ERROR:Invalid session or full");
                         }
                         out.flush();
                         assert s != null;
                         s.setGuestStream(out);
-                    }
-                    else if ("PLAY".equalsIgnoreCase(line)) {
+                    } else if ("PLAY".equalsIgnoreCase(line)) {
                         // PLAY command handled here
                         Session session = socketSessions.get(socket);
                         if (session != null) {
@@ -87,66 +94,59 @@ public class Server {
                                 out.writeObject(session.getCurrentGame());
                                 out.flush();
                             }
-                        }
-                        else {
+                        } else {
                             out.writeObject("ERROR:Not in session");
                             out.flush();
                         }
-                    }
-                    else if(line.toUpperCase().startsWith("SELECT:")) {
+                    } else if (line.toUpperCase().startsWith("SELECT:")) {
                         Session session = socketSessions.get(socket);
                         if (session != null) {
                             String indexStr = line.substring(7).trim();
                             int move = Integer.parseInt(indexStr);
 
-                            session.handlePlayerInput(socket ,move);
+                            session.handlePlayerInput(socket, move);
                             session.broadcastGame();
-                        }
-                        else {
+                        } else {
                             out.writeObject("ERROR:Not in session");
                             out.flush();
                         }
-                    }
-                    else if ("FORFEIT".equalsIgnoreCase(line)) {
+                    } else if ("FORFEIT".equalsIgnoreCase(line)) {
                         Session session = socketSessions.get(socket);
                         if (session != null) {
                             // send give up to other player
-                            session.broadcastTo(session.getOtherOutputStream(socket), "ASK_FORFEIT");
-                        }
-                        else {
+                            session.broadcastTo(session.getOtherOutputStream(socket), Messages.LEAVE_MESSAGE);
+                        } else {
                             out.writeObject("ERROR:Not in session");
                             out.flush();
                         }
-                    }
-                    else if ("RESPOND_FORFEIT".equalsIgnoreCase(line)) {
+                    } else if ("RESPOND_FORFEIT".equalsIgnoreCase(line)) {
                         Session session = socketSessions.get(socket);
                         if (session != null) {
                             // send give up to other player
                             session.getCurrentGame().handleForfeit();
                             session.broadcastGame();
                             session.checkGameStatus();
-                        }
-                        else {
+                        } else {
                             out.writeObject("ERROR:Not in session");
                             out.flush();
                         }
-                    }
-                    else if ("LEADERBOARD".equalsIgnoreCase(line)) {
+                    } else if ("LEADERBOARD".equalsIgnoreCase(line)) {
                         out.writeObject(this.leaderboard);
                         out.flush();
-                    }
-                    else {
-                        // unknown command
-                        out.writeObject("ERROR:Unknown command");
-                        out.flush();
+                    } else if ("LEAVE".equalsIgnoreCase(line)) {
+                        Session session = socketSessions.get(socket);
+                        if (session != null) {
+                            ObjectOutputStream otherOut = session.getOtherOutputStream(socket);
+                            if (otherOut != null) {
+                                session.broadcastTo(otherOut, "PLAYER_LEFT");
+                                sessions.remove(session.getId());
+                                socketSessions.remove(socket);
+                            }
+                        }
                     }
                 }
             }
-        }
-        catch (EOFException eof) {
-            // socket closed on client side, need to close it properly
-        }
-        catch (Exception e) {
+        } catch (ClassNotFoundException | IOException e) {
             e.printStackTrace();
         }
     }
