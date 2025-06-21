@@ -58,6 +58,22 @@ public class Session {
         }
     }
 
+    public synchronized void broadcast(String message) throws IOException {
+        hostOut.reset();
+        hostOut.writeUnshared(message);
+        hostOut.flush();
+
+        guestOut.reset();
+        guestOut.writeUnshared(this.currentGame);
+        guestOut.flush();
+    }
+
+    public synchronized void broadcastTo(ObjectOutputStream out, String message) throws IOException {
+        out.reset();
+        hostOut.writeUnshared(message);
+        hostOut.flush();
+    }
+
     public boolean isFull() {
         return hostSocket != null && guestSocket != null;
     }
@@ -67,18 +83,18 @@ public class Session {
         this.currentPlayerIndex = Math.random() < 0.5 ? 0 : 1;
     }
 
-    public void handlePlayerInput(Socket socket, int move){
+    public void handlePlayerInput(Socket socket, int move) throws IOException {
         int playerIndex = socket.equals(hostSocket) ? 0 : 1;
         if(playerIndex == currentPlayerIndex){
             playOneTurn(playerIndex, move);
         }
     }
 
-    public void playOneTurn(int playerIndex, int move) {
+    public void playOneTurn(int playerIndex, int move) throws IOException {
         Player currentPlayer = players[playerIndex];
         if(currentGame.hasPossibleMoves(currentPlayer)) {
             if (!currentGame.isMoveLegal(playerIndex, move)) {
-                //TODO Broadcast "choose another move"
+                this.broadcast("ILLEGAL_MOVE");
             } else {
                 this.currentGame.playMove(playerIndex, move);
             }
@@ -87,33 +103,34 @@ public class Session {
             this.currentGame.handleNoMoreMoves(playerIndex);
         }
 
-        try {
-            //sending new board to players
-            broadcastGame();
-            this.checkGameStatus();
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
+        //sending new board to players
+        this.broadcastGame();
+        this.checkGameStatus();
     }
 
-    public void checkGameStatus() {
+    public void checkGameStatus() throws IOException {
         switch (this.currentGame.getGameState()) {
             case DRAW :
-                //TODO send draw message to both players
+                this.broadcast("DRAW");
                 break;
-            case WIN:
-                //TODO send victory message to currentPlayer
-                //TODO send defeat message to the other player
+            case WIN: {
+                ObjectOutputStream currentPlayerOut = (currentPlayerIndex == 0) ? this.hostOut : this.guestOut;
+                this.broadcastTo(currentPlayerOut, "VICTORY");
+                ObjectOutputStream otherPlayerOut = (currentPlayerIndex == 0) ? this.guestOut : this.hostOut;
+                this.broadcastTo(otherPlayerOut, "DEFEAT");
                 break;
-            case LOSE:
-                //TODO Same as win but opposite
+            }
+            case LOSE: {
+                ObjectOutputStream currentPlayerOut = (currentPlayerIndex == 0) ? this.hostOut : this.guestOut;
+                this.broadcastTo(currentPlayerOut, "DEFEAT");
+                ObjectOutputStream otherPlayerOut = (currentPlayerIndex == 0) ? this.guestOut : this.hostOut;
+                this.broadcastTo(otherPlayerOut, "VICTORY");
                 break;
+            }
             case ONGOING:
                 //switch player
                 currentPlayerIndex = (currentPlayerIndex + 1) % 2;
                 break;
         }
     }
-
 }

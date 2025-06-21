@@ -77,7 +77,7 @@ public class Server {
                         if (session != null) {
                             out.flush();
                             if (session.isFull()) {
-                                session.initGame(); //TODO to test
+                                session.initGame();
                                 out.writeObject(session.getCurrentGame());
                                 out.flush();
                             }
