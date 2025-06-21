@@ -15,12 +15,11 @@ public class GameBoard implements Serializable {
     private final List<Node> board;
 
     public GameBoard(Player player1, Player player2) { //Rule 2
-        //TODO custom exceptions
         if(BOARD_SIZE % 2 != 0) {
-            throw new IllegalArgumentException("Board size must be even.");
+            throw new GameBoardException("Board size must be even.");
         }
         if(SEEDS_NUMBER % BOARD_SIZE != 0) {
-            throw new IllegalArgumentException("Number of seeds must be divisible by the board size.");
+            throw new GameBoardException("Number of seeds must be divisible by the board size.");
         }
         int seedsPerTile = SEEDS_NUMBER / BOARD_SIZE;
         board = new ArrayList<>(BOARD_SIZE);
@@ -73,12 +72,12 @@ public class GameBoard implements Serializable {
         int score = 0;
         Node startNode = getNodeAt(index);
         if (startNode.getTile().getOwner() != player) {
-            throw new IllegalArgumentException("Cannot distribute seeds from a tile that does not belong to the player.");
+            throw new GameBoardException("Cannot distribute seeds from a tile that does not belong to the player.");
         }
 
         int seedsToDistribute = startNode.getTile().takeAllSeeds();
         if (seedsToDistribute == 0) {
-            throw new IllegalArgumentException("Seeds to distribute cannot be zero.");
+            throw new GameBoardException("Seeds to distribute cannot be zero.");
         }
 
         Node nextNode = startNode;

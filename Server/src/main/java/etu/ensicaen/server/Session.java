@@ -14,7 +14,6 @@ public class Session {
     private final Socket hostSocket;
     private       Socket guestSocket;
     private final Player[] players = new Player[2];
-    private int currentPlayerIndex;
 
     private Game currentGame;
     private ObjectOutputStream hostOut;
@@ -82,16 +81,14 @@ public class Session {
 
     public void initGame() {
         this.currentGame = new Game(players[0], players[1]);
-        this.currentPlayerIndex = Math.random() < 0.5 ? 0 : 1;
-        this.currentGame.setCurrentPlayerIndex(this.currentPlayerIndex);
-
+        this.currentGame.setCurrentPlayerIndex(Math.random() < 0.5 ? 0 : 1);
         if(test) {
             this.setUpForTest();
         }
     }
 
     private void setUpForTest() {
-        this.currentPlayerIndex = 0;
+        this.currentGame.setCurrentPlayerIndex(0);
         this.currentGame.getPlayerScores()[0].increase(0);
         this.currentGame.getPlayerScores()[1].increase(0);
 
@@ -103,7 +100,7 @@ public class Session {
 
     public void handlePlayerInput(Socket socket, int move) throws IOException {
         int playerIndex = socket.equals(hostSocket) ? 0 : 1;
-        if(playerIndex == currentPlayerIndex){
+        if(playerIndex == this.currentGame.getCurrentPlayerIndex()) {
             playOneTurn(playerIndex, move);
         }
     }
@@ -128,6 +125,7 @@ public class Session {
     }
 
     public void checkGameStatus() throws IOException {
+        int currentPlayerIndex = this.currentGame.getCurrentPlayerIndex();
         switch (this.currentGame.getGameState()) {
             case DRAW :
                 this.broadcast(Messages.DRAW_MESSAGE);
@@ -149,15 +147,15 @@ public class Session {
             case ONGOING:
                 //switch player
                 currentPlayerIndex = (currentPlayerIndex + 1) % 2;
-                this.currentGame.setCurrentPlayerIndex(this.currentPlayerIndex);
+                this.currentGame.setCurrentPlayerIndex(currentPlayerIndex);
                 //check rule 6
                 if (!this.currentGame.hasPossibleMoves(players[currentPlayerIndex])){
                     this.currentGame.handleNoMoreMoves(currentPlayerIndex);
 
                     ObjectOutputStream currentPlayerOut = (currentPlayerIndex == 0) ? this.hostOut : this.guestOut;
-                    this.broadcastTo(currentPlayerOut, "NO MOVE TO FEED OPPONENT : VICTORY");
+                    this.broadcastTo(currentPlayerOut, Messages.WIN_MESSAGE + "\n" + Messages.CANT_FEED);
                     ObjectOutputStream otherPlayerOut = (currentPlayerIndex == 0) ? this.guestOut : this.hostOut;
-                    this.broadcastTo(otherPlayerOut, "NO MOVE TO FEED OPPONENT : DEFEAT");
+                    this.broadcastTo(otherPlayerOut, Messages.LOST_MESSAGE + "\n" + Messages.CANT_FEED);
                 }
                 break;
         }
