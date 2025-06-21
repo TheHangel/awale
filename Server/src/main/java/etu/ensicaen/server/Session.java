@@ -66,7 +66,7 @@ public class Session {
         hostOut.flush();
 
         guestOut.reset();
-        guestOut.writeUnshared(this.currentGame);
+        guestOut.writeUnshared(message);
         guestOut.flush();
     }
 
