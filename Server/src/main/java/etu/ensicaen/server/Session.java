@@ -67,7 +67,8 @@ public class Session {
         this.currentPlayerIndex = Math.random() < 0.5 ? 0 : 1;
     }
 
-    public void handlePlayerInput(int playerIndex, int move){
+    public void handlePlayerInput(Socket socket, int move){
+        int playerIndex = socket.equals(hostSocket) ? 0 : 1;
         if(playerIndex == currentPlayerIndex){
             playOneTurn(playerIndex, move);
         }

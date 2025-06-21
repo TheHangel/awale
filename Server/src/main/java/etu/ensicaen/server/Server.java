@@ -93,7 +93,7 @@ public class Server {
                             String indexStr = line.substring(7).trim();
                             int move = Integer.parseInt(indexStr);
 
-                            session.handlePlayerInput(/*player or player index of the session*/ ,move);
+                            session.handlePlayerInput(socket ,move);
                             session.broadcastGame();
                         }
                         else {
