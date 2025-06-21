@@ -2,15 +2,20 @@ package etu.ensicaen.client.views;
 
 import etu.ensicaen.client.Client;
 import etu.ensicaen.client.viewsmodels.MainMenuViewModel;
+import etu.ensicaen.shared.models.Leaderboard;
+import etu.ensicaen.shared.models.PlayerScore;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.SortedList;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.text.Text;
 
 import java.io.IOException;
+import java.util.Comparator;
 
 public class MainMenuView {
     private MainMenuViewModel viewModel;
@@ -27,6 +32,9 @@ public class MainMenuView {
     @FXML
     public Tab joinTab, hostTab;
 
+    @FXML
+    public ListView leaderboardListView;
+
     public void init(MainMenuViewModel vm) {
         this.viewModel = vm;
         this.waitingPlayersText.visibleProperty().bind(this.viewModel.isWaitingVisibleProperty());
@@ -37,6 +45,23 @@ public class MainMenuView {
         this.hostTab.disableProperty().bind(this.viewModel.isJoinedProperty());
         this.joinTab.disableProperty().bind(this.viewModel.isWaitingVisibleProperty());
         this.joinedText.visibleProperty().bind(this.viewModel.isJoinedProperty());
+
+        leaderboardListView.setItems(viewModel.leaderboardProperty());
+
+        leaderboardListView.setCellFactory(lv -> new ListCell<PlayerScore>() {
+            @Override
+            protected void updateItem(PlayerScore item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    setText(item.getPlayer().getUsername()
+                            + " — " + item.getScore());
+                }
+            }
+        });
+
+        viewModel.loadLeaderboard();
     }
 
     @FXML

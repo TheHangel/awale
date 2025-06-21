@@ -1,5 +1,9 @@
 package etu.ensicaen.server;
 
+import etu.ensicaen.shared.models.Leaderboard;
+import etu.ensicaen.shared.models.Player;
+import etu.ensicaen.shared.models.PlayerScore;
+
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -14,6 +18,8 @@ public class Server {
     private final ConcurrentMap<String,Session> sessions = new ConcurrentHashMap<>();
     // link client <socket>, to server <session>
     private final ConcurrentMap<Socket, Session> socketSessions = new ConcurrentHashMap<>();
+
+    Leaderboard leaderboard = new Leaderboard();
 
     private Server(int port) throws IOException {
         serverSocket = new ServerSocket(port);
@@ -124,6 +130,10 @@ public class Server {
                             out.writeObject("ERROR:Not in session");
                             out.flush();
                         }
+                    }
+                    else if ("LEADERBOARD".equalsIgnoreCase(line)) {
+                        out.writeObject(this.leaderboard);
+                        out.flush();
                     }
                     else {
                         // unknown command

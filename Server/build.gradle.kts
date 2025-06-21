@@ -19,7 +19,12 @@ repositories {
 }
 
 application {
-   mainClass.set("etu.ensicaen.server.Main")
+    mainClass.set("etu.ensicaen.server.Main")
+    applicationDefaultJvmArgs = listOf("-Dfile.encoding=UTF-8")
+}
+
+tasks.withType<JavaCompile> {
+    options.encoding = "UTF-8"
 }
 
 dependencies {
