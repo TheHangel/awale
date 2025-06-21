@@ -11,6 +11,7 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 
 import java.io.IOException;
 import java.util.Comparator;
@@ -104,6 +105,14 @@ public class MainMenuViewModel {
     public void onJoin(String id) {
         Task<String> task = this.model.join(id);
         task.setOnSucceeded(ev -> {
+            if(task.getValue().startsWith("ERROR")) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Join Error / Erreur pour rejoindre");
+                alert.setHeaderText("Failed to join session / Échec pour rejoindre la session");
+                alert.setContentText(task.getValue().substring(6));
+                alert.showAndWait();
+                return;
+            }
             this.isJoined.set(true);
             this.isHost.set(false);
         });

@@ -69,13 +69,12 @@ public class Server {
                         if (s != null && s.addGuest(socket)) {
                             socketSessions.put(socket, s);
                             out.writeObject("JOINED:" + id);
-                        }
-                        else {
+                            out.flush();
+                            s.setGuestStream(out);
+                        } else {
                             out.writeObject("ERROR:Invalid session or full");
+                            out.flush();
                         }
-                        out.flush();
-                        assert s != null;
-                        s.setGuestStream(out);
                     }
                     else if ("PLAY".equalsIgnoreCase(line)) {
                         // PLAY command handled here
