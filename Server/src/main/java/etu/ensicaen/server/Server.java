@@ -101,6 +101,30 @@ public class Server {
                             out.flush();
                         }
                     }
+                    else if ("FORFEIT".equalsIgnoreCase(line)) {
+                        Session session = socketSessions.get(socket);
+                        if (session != null) {
+                            // send give up to other player
+                            session.broadcastTo(session.getOtherOutputStream(socket), "ASK_FORFEIT");
+                        }
+                        else {
+                            out.writeObject("ERROR:Not in session");
+                            out.flush();
+                        }
+                    }
+                    else if ("RESPOND_FORFEIT".equalsIgnoreCase(line)) {
+                        Session session = socketSessions.get(socket);
+                        if (session != null) {
+                            // send give up to other player
+                            session.getCurrentGame().handleForfeit();
+                            session.broadcastGame();
+                            session.checkGameStatus();
+                        }
+                        else {
+                            out.writeObject("ERROR:Not in session");
+                            out.flush();
+                        }
+                    }
                     else {
                         // unknown command
                         out.writeObject("ERROR:Unknown command");

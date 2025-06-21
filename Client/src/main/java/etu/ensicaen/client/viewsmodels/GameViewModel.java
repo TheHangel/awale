@@ -22,6 +22,10 @@ public class GameViewModel {
     private final IntegerProperty playerScoreLeft = new SimpleIntegerProperty();
     private final IntegerProperty playerScoreRight= new SimpleIntegerProperty();
 
+    private final StringProperty playerTurn = new SimpleStringProperty();
+
+    private final BooleanProperty canForfeit = new SimpleBooleanProperty(false);
+
     public GameViewModel(Game initial, ViewHandler vh, BooleanProperty isHost) {
         this.viewHandler = vh;
         this.model = initial;
@@ -29,12 +33,15 @@ public class GameViewModel {
         for (int i = 0; i< GameBoard.BOARD_SIZE; i++) {
             seedCounts.add(new SimpleIntegerProperty());
         }
+        updateTurnText();
         bind();
     }
 
     public void setGame(Game g) {
         this.model = g;
+        updateTurnText();
         bind();
+        canForfeit.set( model != null && model.canForfeit() );
     }
 
     public ReadOnlyBooleanProperty isHostProperty() {
@@ -56,6 +63,11 @@ public class GameViewModel {
         }
     }
 
+    private void updateTurnText() {
+        int turnIndex = model.getCurrentPlayerIndex();
+        playerTurn.set(model.getPlayers()[turnIndex].getUsername());
+    }
+
     public ReadOnlyIntegerProperty seedCountProperty(int idx) {
         return seedCounts.get(idx);
     }
@@ -64,11 +76,23 @@ public class GameViewModel {
     public ReadOnlyStringProperty  playerNameRightProperty(){return playerNameRight;}
     public ReadOnlyIntegerProperty playerScoreLeftProperty(){return playerScoreLeft;}
     public ReadOnlyIntegerProperty playerScoreRightProperty(){return playerScoreRight;}
+    public ReadOnlyStringProperty  playerTurnProperty() {return playerTurn;}
+    public ReadOnlyBooleanProperty canForfeitProperty() {return canForfeit;}
 
     public void onPitClicked(int idx) {
         new Thread(() -> {
             try {
                 Client.get().select(idx);
+            } catch (IOException | ClassNotFoundException ex) {
+                ex.printStackTrace();
+            }
+        }).start();
+    }
+
+    public void askForfeit() {
+        new Thread(() -> {
+            try {
+                Client.get().forfeit();
             } catch (IOException | ClassNotFoundException ex) {
                 ex.printStackTrace();
             }
