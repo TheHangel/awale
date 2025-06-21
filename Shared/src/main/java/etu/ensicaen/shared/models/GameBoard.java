@@ -68,6 +68,7 @@ public class GameBoard implements Serializable {
         return board.get(index % BOARD_SIZE);
     }
 
+    //distribut seeds and capture them
     public int distributeSeeds(int index, Player player) { //Rule 3
         int score = 0;
         Node startNode = getNodeAt(index);
@@ -164,5 +165,12 @@ public class GameBoard implements Serializable {
         }
         return totalSeeds;
     }
+
+    public int countRemainingSeeds() { //handles rule 8
+        int totalSeeds = 0;
+        for (Node node : board) {
+            totalSeeds += node.getTile().getSeeds();
+        }
+        return totalSeeds;
+    }
 }
-//TODO replace index by Node in methods ?

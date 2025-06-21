@@ -78,8 +78,8 @@ public class Server {
                         if (session != null) {
                             out.flush();
                             if (session.isFull()) {
-                                Game game = session.getOrCreateGame();
-                                out.writeObject(game);
+                                session.initGame(); //TODO to test
+                                out.writeObject(session.getCurrentGame());
                                 out.flush();
                             }
                         }
@@ -92,10 +92,9 @@ public class Server {
                         Session session = socketSessions.get(socket);
                         if (session != null) {
                             String indexStr = line.substring(7).trim();
-                            int index = Integer.parseInt(indexStr);
-                            Game game = session.getOrCreateGame();
-                            game.getGameBoard().getBoard().get(index).getTile().addSeed();
-                            game.getPlayerScores()[0].increase(1);
+                            int move = Integer.parseInt(indexStr);
+
+                            session.handlePlayerInput(/*player or player index of the session*/ ,move);
                             session.broadcastGame();
                         }
                         else {

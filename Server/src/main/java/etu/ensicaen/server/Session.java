@@ -1,6 +1,7 @@
 package etu.ensicaen.server;
 
 import etu.ensicaen.shared.models.Game;
+import etu.ensicaen.shared.models.GameState;
 import etu.ensicaen.shared.models.Player;
 import etu.ensicaen.shared.models.PlayerScore;
 import java.io.IOException;
@@ -14,6 +15,7 @@ public class Session {
     private final Socket hostSocket;
     private       Socket guestSocket;
     private final Player[] players = new Player[2];
+    //TODO current player global
 
     private Game currentGame;
     private ObjectOutputStream hostOut;
@@ -26,6 +28,8 @@ public class Session {
     }
 
     public String getId() { return id; }
+
+    public Game getCurrentGame() { return currentGame; }
 
     public synchronized boolean addGuest(Socket socket) {
         if (guestSocket == null) {
@@ -69,24 +73,55 @@ public class Session {
         return hostSocket != null && guestSocket != null;
     }
 
-    public boolean startGame() { //TODO : test with mock GameBoard
+    public void initGame() { //TODO : test with mock GameBoard
         Game newGame = new Game(players[0], players[1]);
-        Player currentPlayer = Math.random() < 0.5 ? players[0] : players[1];
-        int gameFinished = 0; // 0 = game not finished, -1 = draw, 1 = victory //@TODO use enum instead of int
-        while(gameFinished == 0) {
-            gameFinished = newGame.playTurn(currentPlayer);
-            newGame.getGameBoard();
-            //TODO send gameBoard to clients for them to display it
-            //switch player
-            currentPlayer = (currentPlayer == players[0]) ? players[1] : players[0];
+        int currentPlayerIndex = Math.random() < 0.5 ? 0 : 1; //TODO variables
+        GameState gameStatus = GameState.ONGOING; //TODO variables
+    }
+
+    public void handlePlayerInput(int playerIndex, int move){
+        //if c'est a lui de jouer avec var globale
+            //play one turn(Player player, int move)
+        //sinon
+            //rien
+    }
+
+    public void playOneTurn(Player player, int move) {
+        //check hasPossibleMoves(player) (dans Game)
+            //if move pas legal
+                //broadcast : rechoisi un move
+            //else
+                //playMove(playerIndex + move) -> change le gameStatus en Win, Draw ou Ongoing
+
+        //si y'a pas de possibleMoves
+            //appelle méthode handleNoMoreMoves -> fin de partie -> change le GameStatus en Win ou Lose
+
+        //fin si
+
+        //broadcast le game board modifié
+        //checkGameStatus()
+    }
+
+    public void checkGameStatus() {
+        switch (gameStatus) {
+            case DRAW :
+                //TODO send draw message to both players
+                break;
+            case WIN:
+                //TODO send victory message to currentPlayer
+                //TODO send defeat message to the other player
+                break;
+            case LOSE: //TODO check if possible to lose during your turn
+                //TODO Same as win but opposite
+                break;
+            case ABANDONED:
+                //TODO ask abandon or display end game here ?
+                break;
+            case ONGOING:
+                //switch player
+                currentPlayerIndex = (currentPlayerIndex + 1) % 2;
+                break;
         }
-        if (gameFinished == -1) {
-            //TODO send draw message to both players
-        } else if (gameFinished == 1) {
-            //TODO send victory message to currentPlayer
-            //TODO send defeat message to the other player
-        }
-        return true;
     }
 
 }
