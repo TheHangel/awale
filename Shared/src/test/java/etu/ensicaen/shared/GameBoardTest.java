@@ -193,6 +193,24 @@ public class GameBoardTest {
     }
 
     @Test
+    void testCaptureSeedsLimit() {
+        //test setup
+        int[] seedDistrib = {1, 1, 1, 0, 2, 2, 2, 1, 1, 1, 1, 1};
+        for (int i = 0; i < seedDistrib.length; i++) {
+            gameBoard.getNodeAt(i).getTile().setSeeds(seedDistrib[i]);
+        }
+
+        assertEquals(2, gameBoard.captureSeeds(6, player1),
+                "Wrong capture result when distributing from index 6 with player1");
+
+        int[] expectedSeeds = {1, 1, 1, 0, 2, 2, 0, 1, 1, 1, 1, 1};
+        for(int i = 0; i < GameBoard.BOARD_SIZE; i++){
+            assertEquals(gameBoard.getNodeAt(i).getTile().getSeeds(), expectedSeeds[i],
+                    "Wrong number of seeds in tile at index " + i + " after capture");
+        }
+    }
+
+    @Test
     void testCaptureSeedsNoCapture() {
         //test setup
         int[] seedDistrib = {2, 0, 0, 0, 0, 3, 9, 3, 2, 4, 3, 0};

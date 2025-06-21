@@ -8,6 +8,7 @@ import java.net.Socket;
 import java.util.UUID;
 
 public class Session {
+    private static final boolean test = false;
     private final String id;
     private final Socket hostSocket;
     private       Socket guestSocket;
@@ -81,6 +82,21 @@ public class Session {
     public void initGame() {
         this.currentGame = new Game(players[0], players[1]);
         this.currentPlayerIndex = Math.random() < 0.5 ? 0 : 1;
+
+        if(test) {
+            this.setUpForTest();
+        }
+    }
+
+    private void setUpForTest() {
+        this.currentPlayerIndex = 0;
+        this.currentGame.getPlayerScores()[0].increase(0);
+        this.currentGame.getPlayerScores()[1].increase(0);
+
+        int[] seedDistrib = {0, 0, 0, 14, 0, 0, 0, 0, 0, 0, 0, 0}; //test skip tile
+        for (int i = 0; i < seedDistrib.length; i++) {
+            this.currentGame.getGameBoard().getNodeAt(i).getTile().setSeeds(seedDistrib[i]);
+        }
     }
 
     public void handlePlayerInput(Socket socket, int move) throws IOException {
@@ -131,6 +147,15 @@ public class Session {
             case ONGOING:
                 //switch player
                 currentPlayerIndex = (currentPlayerIndex + 1) % 2;
+                //check rule 6
+                if (!this.currentGame.hasPossibleMoves(players[currentPlayerIndex])){
+                    this.currentGame.handleNoMoreMoves(currentPlayerIndex);
+
+                    ObjectOutputStream currentPlayerOut = (currentPlayerIndex == 0) ? this.hostOut : this.guestOut;
+                    this.broadcastTo(currentPlayerOut, "NO MOVE TO FEED OPPONENT : VICTORY");
+                    ObjectOutputStream otherPlayerOut = (currentPlayerIndex == 0) ? this.guestOut : this.hostOut;
+                    this.broadcastTo(otherPlayerOut, "NO MOVE TO FEED OPPONENT : DEFEAT");
+                }
                 break;
         }
     }

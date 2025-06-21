@@ -119,7 +119,7 @@ public class GameBoard implements Serializable {
         }
 
         int capturedSeeds = 0;
-        while(currentNode.getTile().getSeeds() == 2 || currentNode.getTile().getSeeds() == 3
+        while((currentNode.getTile().getSeeds() == 2 || currentNode.getTile().getSeeds() == 3)
                 && currentNode.getTile().getOwner() != player) {
             capturedSeeds += currentNode.getTile().takeAllSeeds();
             currentNode = currentNode.getPrev();

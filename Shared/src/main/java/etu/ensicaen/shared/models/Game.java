@@ -76,7 +76,7 @@ public class Game implements Serializable {
         int currentPlayerScore = playerScores[currentPlayerIndex].getScore();
         int opponentScore = playerScores[(currentPlayerIndex+1)%2].getScore();
 
-        if(currentPlayerScore > 25){
+        if(currentPlayerScore >= 25){
             return GameState.WIN;
         }
         if(currentPlayerScore < 25 && opponentScore < 25 && gameBoard.countRemainingSeeds() <= 6){
