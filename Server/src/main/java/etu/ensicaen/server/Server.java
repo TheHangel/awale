@@ -93,9 +93,6 @@ public class Server {
                         if (session != null) {
                             String indexStr = line.substring(7).trim();
                             int index = Integer.parseInt(indexStr);
-                            Game game = session.getOrCreateGame();
-                            game.getGameBoard().getBoard().get(index).getTile().addSeed();
-                            game.getPlayerScores()[0].increase(1);
                             session.broadcastGame();
                         }
                         else {

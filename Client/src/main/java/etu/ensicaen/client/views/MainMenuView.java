@@ -3,30 +3,50 @@ package etu.ensicaen.client.views;
 import etu.ensicaen.client.viewsmodels.MainMenuViewModel;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
-
-import java.io.IOException;
+import javafx.scene.text.Text;
 
 public class MainMenuView {
     private MainMenuViewModel viewModel;
 
     @FXML
-    public TextField sessionIdTextField;
+    public Text waitingPlayersText, joinedText;
+
+    @FXML
+    public TextField sessionIdTextField, sessionIdTextFieldResult;
+
+    @FXML
+    public Button playButtonJoin, playButtonHost;
+
+    @FXML
+    public Tab joinTab, hostTab;
 
     public void init(MainMenuViewModel vm) {
         this.viewModel = vm;
+        this.waitingPlayersText.visibleProperty().bind(this.viewModel.isWaitingVisibleProperty());
+        this.sessionIdTextFieldResult.visibleProperty().bind(this.viewModel.isWaitingVisibleProperty());
+        this.playButtonHost.visibleProperty().bind(this.viewModel.isWaitingVisibleProperty());
+        this.playButtonJoin.visibleProperty().bind(this.viewModel.isJoinedProperty());
+        this.sessionIdTextFieldResult.textProperty().bind(this.viewModel.sessionIdProperty());
+        this.hostTab.disableProperty().bind(this.viewModel.isJoinedProperty());
+        this.joinTab.disableProperty().bind(this.viewModel.isWaitingVisibleProperty());
+        this.joinedText.visibleProperty().bind(this.viewModel.isJoinedProperty());
     }
 
     @FXML
-    private void onPlayAction(ActionEvent actionEvent) throws IOException {
+    private void onPlayAction(ActionEvent actionEvent) {
         this.viewModel.onPlay();
     }
 
-    public void onHostAction(ActionEvent actionEvent) throws IOException {
+    @FXML
+    private void onHostAction(ActionEvent actionEvent) {
         this.viewModel.onHost();
     }
 
-    public void onJoinAction(ActionEvent actionEvent) throws IOException {
+    @FXML
+    private void onJoinAction(ActionEvent actionEvent) {
         this.viewModel.onJoin(sessionIdTextField.getText().trim());
     }
 }
