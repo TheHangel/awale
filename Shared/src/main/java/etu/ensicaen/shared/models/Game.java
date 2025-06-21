@@ -2,7 +2,6 @@ package etu.ensicaen.shared.models;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.net.Socket;
 import java.util.List;
 
 public class Game implements Serializable {
@@ -12,7 +11,6 @@ public class Game implements Serializable {
     private final PlayerScore[] playerScores = new PlayerScore[2];
     private final GameBoard gameBoard;
 
-    private List<Integer> possibleMovesCache;
     private GameState gameState;
 
     private int currentPlayerIndex;
@@ -56,7 +54,7 @@ public class Game implements Serializable {
     public GameBoard getGameBoard() { return gameBoard; }
 
     public boolean hasPossibleMoves(Player currentPlayer){ //rule 6
-        List<Integer> possibleMoves = gameBoard.getPossibleMoves(currentPlayer); //TODO mettre dans un cache ? cache à effacer quand le coup est bon
+        List<Integer> possibleMoves = gameBoard.getPossibleMoves(currentPlayer);
         return possibleMoves.size() > 0;
     }
 

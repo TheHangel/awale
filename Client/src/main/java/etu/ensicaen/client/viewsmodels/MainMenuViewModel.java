@@ -11,7 +11,6 @@ import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 public class MainMenuViewModel {
     private final MainMenu model;

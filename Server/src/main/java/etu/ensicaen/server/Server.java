@@ -1,6 +1,5 @@
 package etu.ensicaen.server;
 
-import etu.ensicaen.shared.models.Game;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;

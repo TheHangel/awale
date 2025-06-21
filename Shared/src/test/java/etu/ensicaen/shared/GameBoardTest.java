@@ -10,8 +10,8 @@ import java.util.List;
 
 public class GameBoardTest {
     private GameBoard gameBoard;
-    Player player1 = new Player("Player 1");
-    Player player2 = new Player("Player 2");
+    final Player player1 = new Player("Player 1");
+    final Player player2 = new Player("Player 2");
 
     @BeforeEach
     void setUp() {

@@ -4,5 +4,5 @@ public enum GameState {
     ONGOING,
     WIN,
     LOSE,
-    DRAW;
+    DRAW
 }

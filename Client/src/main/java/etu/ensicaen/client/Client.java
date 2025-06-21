@@ -48,7 +48,7 @@ public class Client {
         return (Game) in.readObject();
     }
 
-    public void select(int index) throws IOException, ClassNotFoundException {
+    public void select(int index) throws IOException {
         out.writeObject("SELECT:" + index);
         out.flush();
     }
@@ -57,12 +57,12 @@ public class Client {
         return in.readObject();
     }
 
-    public void forfeit() throws IOException, ClassNotFoundException {
+    public void forfeit() throws IOException {
         out.writeObject("FORFEIT");
         out.flush();
     }
 
-    public void respondForfeit() throws IOException, ClassNotFoundException {
+    public void respondForfeit() throws IOException {
         out.writeObject("RESPOND_FORFEIT");
         out.flush();
     }
