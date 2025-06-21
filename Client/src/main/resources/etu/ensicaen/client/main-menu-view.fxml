@@ -39,7 +39,7 @@
           </Tab>
         </tabs>
       </TabPane>
-      <Button layoutX="257.0" layoutY="350.0" mnemonicParsing="false" text="Quit / Quitter" />
+      <Button layoutX="257.0" layoutY="350.0" mnemonicParsing="false" onAction="#onQuitAction" text="Quit / Quitter" />
       <Text layoutX="268.0" layoutY="45.0" strokeType="OUTSIDE" strokeWidth="0.0" text="AWALÉ">
          <font>
             <Font size="20.0" />

@@ -12,7 +12,7 @@ public class Server {
     private final ServerSocket serverSocket;
 
     // link <id session> to <session>
-    private final ConcurrentMap<String,Session> sessions       = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String,Session> sessions = new ConcurrentHashMap<>();
     // link client <socket>, to server <session>
     private final ConcurrentMap<Socket, Session> socketSessions = new ConcurrentHashMap<>();
 
@@ -39,8 +39,8 @@ public class Server {
 
     private void handleClient(Socket socket) {
         try (
-                ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-                ObjectInputStream  in  = new ObjectInputStream(socket.getInputStream())
+            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+            ObjectInputStream  in  = new ObjectInputStream(socket.getInputStream())
         ) {
             out.flush();
             while (true) {
@@ -78,8 +78,8 @@ public class Server {
                         if (session != null) {
                             out.flush();
                             if (session.isFull()) {
-                                Game game = session.getOrCreateGame();
-                                out.writeObject(game);
+                                session.initGame();
+                                out.writeObject(session.getCurrentGame());
                                 out.flush();
                             }
                         }
@@ -92,8 +92,34 @@ public class Server {
                         Session session = socketSessions.get(socket);
                         if (session != null) {
                             String indexStr = line.substring(7).trim();
-                            int index = Integer.parseInt(indexStr);
+                            int move = Integer.parseInt(indexStr);
+
+                            session.handlePlayerInput(socket ,move);
                             session.broadcastGame();
+                        }
+                        else {
+                            out.writeObject("ERROR:Not in session");
+                            out.flush();
+                        }
+                    }
+                    else if ("FORFEIT".equalsIgnoreCase(line)) {
+                        Session session = socketSessions.get(socket);
+                        if (session != null) {
+                            // send give up to other player
+                            session.broadcastTo(session.getOtherOutputStream(socket), "ASK_FORFEIT");
+                        }
+                        else {
+                            out.writeObject("ERROR:Not in session");
+                            out.flush();
+                        }
+                    }
+                    else if ("RESPOND_FORFEIT".equalsIgnoreCase(line)) {
+                        Session session = socketSessions.get(socket);
+                        if (session != null) {
+                            // send give up to other player
+                            session.getCurrentGame().handleForfeit();
+                            session.broadcastGame();
+                            session.checkGameStatus();
                         }
                         else {
                             out.writeObject("ERROR:Not in session");
