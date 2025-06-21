@@ -74,6 +74,11 @@ public class Client {
         return (Leaderboard) in.readObject();
     }
 
+    public void leave() throws IOException {
+        out.writeObject("LEAVE");
+        out.flush();
+    }
+
     public void close() throws IOException {
         socket.close();
     }

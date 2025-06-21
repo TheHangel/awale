@@ -135,6 +135,21 @@ public class Server {
                         out.writeObject(this.leaderboard);
                         out.flush();
                     }
+                    else if ("LEAVE".equalsIgnoreCase(line)) {
+                        Session session = socketSessions.get(socket);
+                        if (session != null) {
+                            session.remove(socket);
+                            ObjectOutputStream otherOut = session.getOtherOutputStream(socket);
+                            if (otherOut != null) {
+                                otherOut.writeUnshared("PLAYER_LEFT");
+                                otherOut.flush();
+                            }
+                        }
+                        else {
+                            out.writeObject("ERROR:Not in session");
+                            out.flush();
+                        }
+                    }
                     else {
                         // unknown command
                         out.writeObject("ERROR:Unknown command");

@@ -100,6 +100,13 @@ public class GameViewModel {
     }
 
     public void onBackToMenu() throws IOException {
+        new Thread(() -> {
+            try {
+                Client.get().leave();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }).start();
         viewHandler.openMainMenu();
     }
 }
