@@ -57,6 +57,16 @@ public class Client {
         return in.readObject();
     }
 
+    public void forfeit() throws IOException, ClassNotFoundException {
+        out.writeObject("FORFEIT");
+        out.flush();
+    }
+
+    public void respondForfeit() throws IOException, ClassNotFoundException {
+        out.writeObject("RESPOND_FORFEIT");
+        out.flush();
+    }
+
     public void close() throws IOException {
         socket.close();
     }

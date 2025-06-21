@@ -1,6 +1,7 @@
 package etu.ensicaen.server;
 
 import etu.ensicaen.shared.models.Game;
+import etu.ensicaen.shared.models.Messages;
 import etu.ensicaen.shared.models.Player;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -71,8 +72,8 @@ public class Session {
 
     public synchronized void broadcastTo(ObjectOutputStream out, String message) throws IOException {
         out.reset();
-        hostOut.writeUnshared(message);
-        hostOut.flush();
+        out.writeUnshared(message);
+        out.flush();
     }
 
     public boolean isFull() {
@@ -82,6 +83,7 @@ public class Session {
     public void initGame() {
         this.currentGame = new Game(players[0], players[1]);
         this.currentPlayerIndex = Math.random() < 0.5 ? 0 : 1;
+        this.currentGame.setCurrentPlayerIndex(this.currentPlayerIndex);
 
         if(test) {
             this.setUpForTest();
@@ -110,7 +112,7 @@ public class Session {
         Player currentPlayer = players[playerIndex];
         if(currentGame.hasPossibleMoves(currentPlayer)) {
             if (!currentGame.isMoveLegal(playerIndex, move)) {
-                this.broadcast("ILLEGAL_MOVE");
+                this.broadcast(Messages.ILLEGAL_MESSAGE);
                 return; //player need to choose another move
             } else {
                 this.currentGame.playMove(playerIndex, move);
@@ -128,25 +130,26 @@ public class Session {
     public void checkGameStatus() throws IOException {
         switch (this.currentGame.getGameState()) {
             case DRAW :
-                this.broadcast("DRAW");
+                this.broadcast(Messages.DRAW_MESSAGE);
                 break;
             case WIN: {
                 ObjectOutputStream currentPlayerOut = (currentPlayerIndex == 0) ? this.hostOut : this.guestOut;
-                this.broadcastTo(currentPlayerOut, "VICTORY");
+                this.broadcastTo(currentPlayerOut, Messages.WIN_MESSAGE);
                 ObjectOutputStream otherPlayerOut = (currentPlayerIndex == 0) ? this.guestOut : this.hostOut;
-                this.broadcastTo(otherPlayerOut, "DEFEAT");
+                this.broadcastTo(otherPlayerOut, Messages.LOST_MESSAGE);
                 break;
             }
             case LOSE: {
                 ObjectOutputStream currentPlayerOut = (currentPlayerIndex == 0) ? this.hostOut : this.guestOut;
-                this.broadcastTo(currentPlayerOut, "DEFEAT");
+                this.broadcastTo(currentPlayerOut, Messages.LOST_MESSAGE);
                 ObjectOutputStream otherPlayerOut = (currentPlayerIndex == 0) ? this.guestOut : this.hostOut;
-                this.broadcastTo(otherPlayerOut, "VICTORY");
+                this.broadcastTo(otherPlayerOut, Messages.WIN_MESSAGE);
                 break;
             }
             case ONGOING:
                 //switch player
                 currentPlayerIndex = (currentPlayerIndex + 1) % 2;
+                this.currentGame.setCurrentPlayerIndex(this.currentPlayerIndex);
                 //check rule 6
                 if (!this.currentGame.hasPossibleMoves(players[currentPlayerIndex])){
                     this.currentGame.handleNoMoreMoves(currentPlayerIndex);
@@ -158,5 +161,14 @@ public class Session {
                 }
                 break;
         }
+    }
+
+    public ObjectOutputStream getOtherOutputStream(Socket socket) {
+        if (socket.equals(hostSocket)) {
+            return guestOut;
+        } else if (socket.equals(guestSocket)) {
+            return hostOut;
+        }
+        return null;
     }
 }

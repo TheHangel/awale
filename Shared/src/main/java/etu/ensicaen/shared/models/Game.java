@@ -2,6 +2,7 @@ package etu.ensicaen.shared.models;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.net.Socket;
 import java.util.List;
 
 public class Game implements Serializable {
@@ -13,6 +14,8 @@ public class Game implements Serializable {
 
     private List<Integer> possibleMovesCache;
     private GameState gameState;
+
+    private int currentPlayerIndex;
 
     public GameState getGameState() {
         return gameState;
@@ -37,6 +40,15 @@ public class Game implements Serializable {
         this.gameBoard = new GameBoard(player1, player2);
         this.gameState = GameState.ONGOING;
     }
+
+    public void setCurrentPlayerIndex(int currentPlayerIndex) {
+        this.currentPlayerIndex = currentPlayerIndex;
+    }
+
+    public int getCurrentPlayerIndex() {
+        return this.currentPlayerIndex;
+    }
+
     public Player[] getPlayers() { return players; }
 
     public PlayerScore[] getPlayerScores() { return playerScores; }
@@ -91,17 +103,14 @@ public class Game implements Serializable {
     }
 
     //onclick on forfeit button
-    public void handleForfeit(int currentPlayerIndex){
-        //-> TODO demander à l'autre joueur s'il veut forfeit
-        if(true) { //if opponent accept to forfeit
-            int seedsRemaining = gameBoard.takeRemainingSeeds();
-            for (PlayerScore playerScore : playerScores) {
-                playerScore.increase(seedsRemaining / 2);
-            }
-            int currentPlayerScore = playerScores[currentPlayerIndex].getScore();
-            int opponentScore = playerScores[(currentPlayerIndex + 1) % 2].getScore();
-
-            this.gameState = currentPlayerScore > opponentScore ? GameState.WIN : GameState.LOSE;
+    public void handleForfeit(){
+        int seedsRemaining = gameBoard.takeRemainingSeeds();
+        for (PlayerScore playerScore : playerScores) {
+            playerScore.increase(seedsRemaining / 2);
         }
+        int currentPlayerScore = playerScores[currentPlayerIndex].getScore();
+        int opponentScore = playerScores[(currentPlayerIndex + 1) % 2].getScore();
+
+        this.gameState = currentPlayerScore > opponentScore ? GameState.WIN : GameState.LOSE;
     }
 }

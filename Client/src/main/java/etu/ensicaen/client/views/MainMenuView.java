@@ -1,6 +1,8 @@
 package etu.ensicaen.client.views;
 
+import etu.ensicaen.client.Client;
 import etu.ensicaen.client.viewsmodels.MainMenuViewModel;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
@@ -28,5 +30,12 @@ public class MainMenuView {
 
     public void onJoinAction(ActionEvent actionEvent) throws IOException {
         this.viewModel.onJoin(sessionIdTextField.getText().trim());
+    }
+
+    @FXML
+    private void onQuitAction() throws IOException {
+        Client.get().close();
+        Platform.exit();
+        System.exit(0);
     }
 }
