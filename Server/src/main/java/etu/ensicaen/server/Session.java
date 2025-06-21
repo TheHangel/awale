@@ -95,6 +95,7 @@ public class Session {
         if(currentGame.hasPossibleMoves(currentPlayer)) {
             if (!currentGame.isMoveLegal(playerIndex, move)) {
                 this.broadcast("ILLEGAL_MOVE");
+                return; //player need to choose another move
             } else {
                 this.currentGame.playMove(playerIndex, move);
             }

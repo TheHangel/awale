@@ -90,16 +90,17 @@ public class GameBoard implements Serializable {
             }
         }
 
-        if(! willCaptureEverything(index, player)) { // rule 7 : if the move captures all seeds, do not capture anything
-            return captureSeeds(index, player);
+        int endIndex = this.board.indexOf(nextNode);
+        if(! willCaptureEverything(endIndex, player)) { // rule 7 : if the move captures all seeds, do not capture anything
+            return captureSeeds(endIndex, player);
         }
         return score;
     }
 
-    //on a board that as all the seeds moods
-    public boolean willCaptureEverything(int startNodeIdx, Player player){ // handles rule 7
+    //on a board that has all the seeds moved
+    public boolean willCaptureEverything(int endNodeIdx, Player player){ // handles rule 7
         GameBoard boardCopy = new GameBoard(this);
-        boardCopy.captureSeeds(startNodeIdx, player); // simulate capture
+        boardCopy.captureSeeds(endNodeIdx, player); // simulate capture
 
         int seedsRemaining = 0;
         for (Node node : boardCopy.getBoard()) {
@@ -111,8 +112,8 @@ public class GameBoard implements Serializable {
     }
 
     //doesn't check for rule 7
-    public int captureSeeds(int index, Player player) { // handles rule 4
-        Node currentNode = getNodeAt(index);
+    public int captureSeeds(int endTileIndex, Player player) { // handles rule 4
+        Node currentNode = getNodeAt(endTileIndex);
         if (currentNode.getTile().getOwner() == player) {
             return 0; // Don't capture seeds from a tile that belongs to the player
         }
