@@ -1,16 +1,19 @@
 package etu.ensicaen.client.viewsmodels;
 
+import etu.ensicaen.client.Client;
 import etu.ensicaen.client.handlers.ViewHandler;
 import etu.ensicaen.client.models.MainMenu;
 import etu.ensicaen.shared.models.Game;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import etu.ensicaen.shared.models.Leaderboard;
+import etu.ensicaen.shared.models.PlayerScore;
+import javafx.application.Platform;
+import javafx.beans.property.*;
+import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 
 import java.io.IOException;
+import java.util.Comparator;
 
 public class MainMenuViewModel {
     private final MainMenu model;
@@ -22,6 +25,10 @@ public class MainMenuViewModel {
     private final BooleanProperty isJoined = new SimpleBooleanProperty(false);
 
     private final StringProperty sessionId = new SimpleStringProperty();
+
+    private final ReadOnlyListWrapper<PlayerScore> leaderboard =
+            new ReadOnlyListWrapper<>(FXCollections.observableArrayList());
+
 
     public MainMenuViewModel(ViewHandler vh) {
         this.model = new MainMenu();
@@ -37,6 +44,29 @@ public class MainMenuViewModel {
 
     public StringProperty sessionIdProperty() {
         return this.sessionId;
+    }
+
+    public ReadOnlyListProperty<PlayerScore> leaderboardProperty() {
+        return leaderboard.getReadOnlyProperty();
+    }
+
+    public void loadLeaderboard() {
+        Task<Leaderboard> task = new Task<>() {
+            @Override
+            protected Leaderboard call() throws Exception {
+                return Client.get().leaderboard();
+            }
+        };
+        task.setOnSucceeded(ev -> {
+            Leaderboard lb = task.getValue();
+            Platform.runLater(() -> {
+                leaderboard.setAll(lb);
+            });
+        });
+        task.setOnFailed(ev -> {
+            task.getException().printStackTrace();
+        });
+        new Thread(task).start();
     }
 
     @FXML

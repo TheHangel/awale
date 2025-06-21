@@ -1,15 +1,16 @@
 package etu.ensicaen.client;
 
 import etu.ensicaen.shared.models.Game;
+import etu.ensicaen.shared.models.Leaderboard;
 
 import java.io.*;
 import java.net.Socket;
 
 public class Client {
     private static Client client;
-    private Socket             socket;
-    private ObjectInputStream  in;
-    private ObjectOutputStream out;
+    private final Socket             socket;
+    private final ObjectInputStream  in;
+    private final ObjectOutputStream out;
 
     private Client(String host, int port) throws IOException {
         socket = new Socket(host, port);
@@ -65,6 +66,12 @@ public class Client {
     public void respondForfeit() throws IOException {
         out.writeObject("RESPOND_FORFEIT");
         out.flush();
+    }
+
+    public Leaderboard leaderboard() throws IOException, ClassNotFoundException {
+        out.writeObject("LEADERBOARD");
+        out.flush();
+        return (Leaderboard) in.readObject();
     }
 
     public void close() throws IOException {
