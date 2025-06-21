@@ -9,7 +9,7 @@ import java.io.IOException;
 public class ClientApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        Client.get("localhost", 12345);
+        Client.get(Config.host(), Config.port());
         stage.setOnCloseRequest(ev -> {
             try {
                 Client.get().close();
