@@ -1,6 +1,5 @@
 package etu.ensicaen.server;
 
-import etu.ensicaen.shared.models.Game;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -12,7 +11,7 @@ public class Server {
     private final ServerSocket serverSocket;
 
     // link <id session> to <session>
-    private final ConcurrentMap<String,Session> sessions       = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String,Session> sessions = new ConcurrentHashMap<>();
     // link client <socket>, to server <session>
     private final ConcurrentMap<Socket, Session> socketSessions = new ConcurrentHashMap<>();
 
@@ -39,8 +38,8 @@ public class Server {
 
     private void handleClient(Socket socket) {
         try (
-                ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-                ObjectInputStream  in  = new ObjectInputStream(socket.getInputStream())
+            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+            ObjectInputStream  in  = new ObjectInputStream(socket.getInputStream())
         ) {
             out.flush();
             while (true) {

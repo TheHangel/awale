@@ -3,19 +3,20 @@ package etu.ensicaen.shared.models;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
-import java.util.stream.IntStream;
 
 public class Game implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
-
     private final Player[] players = new Player[2];
     private final PlayerScore[] playerScores = new PlayerScore[2];
     private final GameBoard gameBoard;
 
-    //TODO GameState global avec un getter
-
     private List<Integer> possibleMovesCache;
+    private GameState gameState;
+
+    public GameState getGameState() {
+        return gameState;
+    }
 
     //create and init game
     public Game(Player player1, Player player2) {
@@ -34,6 +35,7 @@ public class Game implements Serializable {
 
         //handle game board
         this.gameBoard = new GameBoard(player1, player2);
+        this.gameState = GameState.ONGOING;
     }
     public Player[] getPlayers() { return players; }
 
@@ -41,18 +43,17 @@ public class Game implements Serializable {
 
     public GameBoard getGameBoard() { return gameBoard; }
 
-    public boolean HasPossibleMoves(Player currentPlayer){ //rule 6
+    public boolean hasPossibleMoves(Player currentPlayer){ //rule 6
         List<Integer> possibleMoves = gameBoard.getPossibleMoves(currentPlayer); //TODO mettre dans un cache ? cache à effacer quand le coup est bon
         return possibleMoves.size() > 0;
     }
 
     public void handleNoMoreMoves(int currentPlayerIndex) {
-        //-> si aucun coup qui nourri, jeu s'arrete + joueur qui devait jouer capture toutes les graines
+        //if no moves can feed the opponent, game stop and current player capture remaining seeds
         playerScores[currentPlayerIndex].increase(gameBoard.takeRemainingSeeds());
         int currentPlayerScore = playerScores[currentPlayerIndex].getScore();
         int opponentScore = playerScores[(currentPlayerIndex+1)%2].getScore();
-        return currentPlayerScore > opponentScore ?
-                GameState.WIN : GameState.LOSE; //TODO changer la var globale
+        this.gameState = currentPlayerScore > opponentScore ? GameState.WIN : GameState.LOSE;
     }
 
     public boolean isMoveLegal(int currentPlayerIndex, int move){
@@ -64,11 +65,11 @@ public class Game implements Serializable {
     }
 
     //apply move (seeds distribution) without checking if legal
-    public GameState playMove(int currentPlayerIndex, int move){
+    public void playMove(int currentPlayerIndex, int move){
         Player currentPlayer = players[currentPlayerIndex];
         int turnScore = gameBoard.distributeSeeds(move, currentPlayer);
         playerScores[currentPlayerIndex].increase(turnScore);
-        return checkWinCondition(currentPlayerIndex); //TODO update global variable instead of return
+        this.gameState = checkWinCondition(currentPlayerIndex);
     }
 
     public GameState checkWinCondition(int currentPlayerIndex){ //handles rule 8
@@ -84,22 +85,23 @@ public class Game implements Serializable {
         return GameState.ONGOING;
     }
 
-    //TODO méthode : proposer abandon :
-    //      -> <= 10 graines sur le plateau
-    //      -> l'autre joueur doit accepter (pareil que le tour, comment on demande au joueur ?)
-    //      -> puis se partage les graines restantes (si impair?)
-    public boolean canForfeit(int currentPlayerIndex){
+    //binding to activate/desactivate forfeit button
+    public boolean canForfeit(){
         return gameBoard.countRemainingSeeds() <= 10;
     }
 
-    public boolean handleForfeit(Player currentPlayer){ //onclick sur forfeit
-        //-> demander à l'autre joueur s'il veut forfeit
-        //si il accepte
-        int seedsRemaining = gameBoard.takeRemainingSeeds();
-        for(PlayerScore playerScore : playerScores){
-            playerScore.increase(seedsRemaining/2);
+    //onclick on forfeit button
+    public void handleForfeit(int currentPlayerIndex){
+        //-> TODO demander à l'autre joueur s'il veut forfeit
+        if(true) { //if opponent accept to forfeit
+            int seedsRemaining = gameBoard.takeRemainingSeeds();
+            for (PlayerScore playerScore : playerScores) {
+                playerScore.increase(seedsRemaining / 2);
+            }
+            int currentPlayerScore = playerScores[currentPlayerIndex].getScore();
+            int opponentScore = playerScores[(currentPlayerIndex + 1) % 2].getScore();
+
+            this.gameState = currentPlayerScore > opponentScore ? GameState.WIN : GameState.LOSE;
         }
-        //sinon on fait rien -> GameState en Abandoned (gagnant ou perdant selon le score des 2)
-        return false;
     }
 }

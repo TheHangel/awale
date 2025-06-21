@@ -4,6 +4,5 @@ public enum GameState {
     ONGOING,
     WIN,
     LOSE,
-    ABANDONED,
     DRAW;
 }

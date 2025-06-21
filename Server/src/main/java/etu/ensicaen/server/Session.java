@@ -1,13 +1,10 @@
 package etu.ensicaen.server;
 
 import etu.ensicaen.shared.models.Game;
-import etu.ensicaen.shared.models.GameState;
 import etu.ensicaen.shared.models.Player;
-import etu.ensicaen.shared.models.PlayerScore;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.UUID;
 
 public class Session {
@@ -15,7 +12,7 @@ public class Session {
     private final Socket hostSocket;
     private       Socket guestSocket;
     private final Player[] players = new Player[2];
-    //TODO current player global
+    private int currentPlayerIndex;
 
     private Game currentGame;
     private ObjectOutputStream hostOut;
@@ -40,13 +37,6 @@ public class Session {
         return false;
     }
 
-    public synchronized Game getOrCreateGame() {
-        if (currentGame == null) {
-            currentGame = new Game(players[0], players[1]);
-        }
-        return currentGame;
-    }
-
     public synchronized void setHostStream(ObjectOutputStream out) {
         this.hostOut = out;
     }
@@ -56,15 +46,14 @@ public class Session {
     }
 
     public synchronized void broadcastGame() throws IOException {
-        Game g = getOrCreateGame();
         if (hostOut != null) {
             hostOut.reset();
-            hostOut.writeUnshared(g);
+            hostOut.writeUnshared(this.currentGame);
             hostOut.flush();
         }
         if (guestOut != null) {
             guestOut.reset();
-            guestOut.writeUnshared(g);
+            guestOut.writeUnshared(this.currentGame);
             guestOut.flush();
         }
     }
@@ -73,37 +62,42 @@ public class Session {
         return hostSocket != null && guestSocket != null;
     }
 
-    public void initGame() { //TODO : test with mock GameBoard
-        Game newGame = new Game(players[0], players[1]);
-        int currentPlayerIndex = Math.random() < 0.5 ? 0 : 1; //TODO variables
-        GameState gameStatus = GameState.ONGOING; //TODO variables
+    public void initGame() {
+        this.currentGame = new Game(players[0], players[1]);
+        this.currentPlayerIndex = Math.random() < 0.5 ? 0 : 1;
     }
 
     public void handlePlayerInput(int playerIndex, int move){
-        //if c'est a lui de jouer avec var globale
-            //play one turn(Player player, int move)
-        //sinon
-            //rien
+        if(playerIndex == currentPlayerIndex){
+            playOneTurn(playerIndex, move);
+        }
     }
 
-    public void playOneTurn(Player player, int move) {
-        //check hasPossibleMoves(player) (dans Game)
-            //if move pas legal
-                //broadcast : rechoisi un move
-            //else
-                //playMove(playerIndex + move) -> change le gameStatus en Win, Draw ou Ongoing
+    public void playOneTurn(int playerIndex, int move) {
+        Player currentPlayer = players[playerIndex];
+        if(currentGame.hasPossibleMoves(currentPlayer)) {
+            if (!currentGame.isMoveLegal(playerIndex, move)) {
+                //TODO Broadcast "choose another move"
+            } else {
+                this.currentGame.playMove(playerIndex, move);
+            }
+        }
+        else { //no possible moves
+            this.currentGame.handleNoMoreMoves(playerIndex);
+        }
 
-        //si y'a pas de possibleMoves
-            //appelle méthode handleNoMoreMoves -> fin de partie -> change le GameStatus en Win ou Lose
-
-        //fin si
-
-        //broadcast le game board modifié
-        //checkGameStatus()
+        try {
+            //sending new board to players
+            broadcastGame();
+            this.checkGameStatus();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void checkGameStatus() {
-        switch (gameStatus) {
+        switch (this.currentGame.getGameState()) {
             case DRAW :
                 //TODO send draw message to both players
                 break;
@@ -111,11 +105,8 @@ public class Session {
                 //TODO send victory message to currentPlayer
                 //TODO send defeat message to the other player
                 break;
-            case LOSE: //TODO check if possible to lose during your turn
+            case LOSE:
                 //TODO Same as win but opposite
-                break;
-            case ABANDONED:
-                //TODO ask abandon or display end game here ?
                 break;
             case ONGOING:
                 //switch player
