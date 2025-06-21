@@ -5,6 +5,8 @@ import etu.ensicaen.client.models.MainMenu;
 import etu.ensicaen.shared.models.Game;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 
@@ -15,11 +17,27 @@ public class MainMenuViewModel {
     private final MainMenu model;
     private final ViewHandler viewHandler;
 
-    private BooleanProperty isHost = new SimpleBooleanProperty();
+    private final BooleanProperty isHost = new SimpleBooleanProperty();
+
+    private final BooleanProperty isWaitingVisible = new SimpleBooleanProperty(false);
+    private final BooleanProperty isJoined = new SimpleBooleanProperty(false);
+
+    private final StringProperty sessionId = new SimpleStringProperty();
 
     public MainMenuViewModel(ViewHandler vh) {
         this.model = new MainMenu();
         this.viewHandler = vh;
+    }
+
+    public BooleanProperty isWaitingVisibleProperty() {
+        return this.isWaitingVisible;
+    }
+    public BooleanProperty isJoinedProperty() {
+        return this.isJoined;
+    }
+
+    public StringProperty sessionIdProperty() {
+        return this.sessionId;
     }
 
     @FXML
@@ -44,7 +62,10 @@ public class MainMenuViewModel {
     public void onHost() {
         Task<String> task = this.model.host();
         task.setOnSucceeded(ev -> {
-            System.out.println(task.getValue());
+            String sessionString = task.getValue();
+            String sessionId = sessionString.substring(11);
+            this.sessionId.set(sessionId);
+            this.isWaitingVisible.set(true);
             this.isHost.set(true);
         });
         new Thread(task).start();
@@ -54,7 +75,7 @@ public class MainMenuViewModel {
     public void onJoin(String id) {
         Task<String> task = this.model.join(id);
         task.setOnSucceeded(ev -> {
-            System.out.println(task.getValue());
+            this.isJoined.set(true);
             this.isHost.set(false);
         });
         new Thread(task).start();
