@@ -38,7 +38,9 @@ public class Server {
             // attente message client
             Socket clientSocket = serverSocket.accept();
             System.out.println("Client connected: " + clientSocket.getRemoteSocketAddress());
-            new Thread(() -> handleClient(clientSocket)).start();
+            new Thread(() -> {
+                handleClient(clientSocket);
+            }).start();
         }
     }
 
@@ -138,17 +140,18 @@ public class Server {
                     else if ("LEAVE".equalsIgnoreCase(line)) {
                         Session session = socketSessions.get(socket);
                         if (session != null) {
-                            session.remove(socket);
                             ObjectOutputStream otherOut = session.getOtherOutputStream(socket);
                             if (otherOut != null) {
-                                otherOut.writeUnshared("PLAYER_LEFT");
-                                otherOut.flush();
+                                session.broadcastTo(otherOut, "PLAYER_LEFT");
                             }
                         }
-                        else {
-                            out.writeObject("ERROR:Not in session");
-                            out.flush();
-                        }
+                        //socket.close();
+                        break;
+                    }
+                    else {
+                        out.writeObject("ERROR:Not in session");
+                        out.flush();
+                    }
                     }
                     else {
                         // unknown command
@@ -156,12 +159,11 @@ public class Server {
                         out.flush();
                     }
                 }
-            }
-        }
-        catch (EOFException eof) {
-            // socket closed on client side, need to close it properly
-        }
-        catch (Exception e) {
+            } catch (ClassNotFoundException ex) {
+            throw new RuntimeException(ex);
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

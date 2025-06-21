@@ -172,16 +172,17 @@ public class Session {
         return null;
     }
 
-    public synchronized void remove(Socket socket) throws IOException {
-        if (socket.equals(hostSocket)) {
-            hostOut.close();
+    public synchronized void removePlayer(Socket s) {
+        if (s.equals(hostSocket)) {
             hostSocket = null;
-            hostOut    = null;
-        }
-        else if (socket.equals(guestSocket)) {
-            guestOut.close();
+            hostOut = null;
+        } else if (s.equals(guestSocket)) {
             guestSocket = null;
-            guestOut    = null;
+            guestOut = null;
         }
+    }
+
+    public boolean isEmpty() {
+        return hostSocket == null && guestSocket == null;
     }
 }
