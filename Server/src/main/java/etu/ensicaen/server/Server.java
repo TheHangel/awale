@@ -1,8 +1,6 @@
 package etu.ensicaen.server;
 
 import etu.ensicaen.shared.models.Leaderboard;
-import etu.ensicaen.shared.models.Player;
-import etu.ensicaen.shared.models.PlayerScore;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -53,9 +51,10 @@ public class Server {
                 if (obj instanceof String) {
                     String line = ((String) obj).trim();
 
-                    if ("HOST".equalsIgnoreCase(line)) {
+                    if (line.toUpperCase().startsWith("HOST:")) {
+                        String username = line.substring(5);
                         // session creation
-                        Session s = new Session(socket);
+                        Session s = new Session(socket, username);
                         sessions.put(s.getId(), s);
                         socketSessions.put(socket, s);
                         out.writeObject("SESSION_ID:" + s.getId());
@@ -64,9 +63,10 @@ public class Server {
                     }
                     else if (line.toUpperCase().startsWith("JOIN:")) {
                         // join session
-                        String id = line.substring(5).trim();
+                        String id = line.substring(5, 13).trim();
+                        String username = line.substring(14).trim();
                         Session s = sessions.get(id);
-                        if (s != null && s.addGuest(socket)) {
+                        if (s != null && s.addGuest(socket, username)) {
                             socketSessions.put(socket, s);
                             out.writeObject("JOINED:" + id);
                             out.flush();
