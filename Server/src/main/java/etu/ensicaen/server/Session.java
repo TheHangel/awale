@@ -12,7 +12,7 @@ import java.util.UUID;
 public class Session {
     private static final boolean test = false;
     private final String id;
-    private final Socket hostSocket;
+    private Socket hostSocket;
     private       Socket guestSocket;
     private final Player[] players = new Player[2];
 
@@ -177,12 +177,26 @@ public class Session {
         }
     }
 
-    public ObjectOutputStream getOtherOutputStream(Socket socket) {
+    public synchronized ObjectOutputStream getOtherOutputStream(Socket socket) {
         if (socket.equals(hostSocket)) {
             return guestOut;
         } else if (socket.equals(guestSocket)) {
             return hostOut;
         }
         return null;
+    }
+
+    public synchronized void removePlayer(Socket s) {
+        if (s.equals(hostSocket)) {
+            hostSocket = null;
+            hostOut = null;
+        } else if (s.equals(guestSocket)) {
+            guestSocket = null;
+            guestOut = null;
+        }
+    }
+
+    public boolean isEmpty() {
+        return hostSocket == null && guestSocket == null;
     }
 }

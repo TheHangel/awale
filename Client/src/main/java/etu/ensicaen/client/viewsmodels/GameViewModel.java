@@ -102,6 +102,13 @@ public class GameViewModel {
     public void onBackToMenu() {
         try {
             Client.reconnect();
+            new Thread(() -> {
+                try {
+                    Client.get().leave();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }).start();
             viewHandler.openMainMenu();
         } catch (IOException e) {
             e.printStackTrace();

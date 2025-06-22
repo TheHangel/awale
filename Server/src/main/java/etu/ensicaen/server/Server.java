@@ -1,5 +1,9 @@
 package etu.ensicaen.server;
+
 import etu.ensicaen.shared.models.Leaderboard;
+import etu.ensicaen.shared.models.Messages;
+import etu.ensicaen.shared.models.Player;
+import etu.ensicaen.shared.models.PlayerScore;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -16,6 +20,8 @@ public class Server {
     private final ConcurrentMap<String,Session> sessions = new ConcurrentHashMap<>();
     // link client <socket>, to server <session>
     private final ConcurrentMap<Socket, Session> socketSessions = new ConcurrentHashMap<>();
+
+    Leaderboard leaderboard = new Leaderboard();
 
     private Server(int port) throws IOException {
         serverSocket = new ServerSocket(port);
@@ -136,19 +142,20 @@ public class Server {
                         out.reset();
                         out.writeObject(lb);
                         out.flush();
-                    }
-                    else {
-                        // unknown command
-                        out.writeObject("ERROR:Unknown command");
-                        out.flush();
+                    } else if ("LEAVE".equalsIgnoreCase(line)) {
+                        Session session = socketSessions.get(socket);
+                        if (session != null) {
+                            ObjectOutputStream otherOut = session.getOtherOutputStream(socket);
+                            if (otherOut != null) {
+                                session.broadcastTo(otherOut, "PLAYER_LEFT");
+                                sessions.remove(session.getId());
+                                socketSessions.remove(socket);
+                            }
+                        }
                     }
                 }
             }
-        }
-        catch (EOFException eof) {
-            // socket closed on client side, need to close it properly
-        }
-        catch (Exception e) {
+        } catch (ClassNotFoundException | IOException e) {
             e.printStackTrace();
         }
     }

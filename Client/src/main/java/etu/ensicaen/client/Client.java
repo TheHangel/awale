@@ -125,6 +125,11 @@ public class Client {
         }
     }
 
+    public void leave() throws IOException {
+        out.writeObject("LEAVE");
+        out.flush();
+    }
+
     public void close() throws IOException {
         try {
             in.close();
