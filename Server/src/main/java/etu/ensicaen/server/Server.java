@@ -1,8 +1,5 @@
 package etu.ensicaen.server;
-
 import etu.ensicaen.shared.models.Leaderboard;
-import etu.ensicaen.shared.models.Player;
-import etu.ensicaen.shared.models.PlayerScore;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -13,17 +10,20 @@ import java.util.concurrent.ConcurrentMap;
 public class Server {
     private static Server server;
     private final ServerSocket serverSocket;
+    private static final Leaderboard leaderboard = Leaderboard.load();
 
     // link <id session> to <session>
     private final ConcurrentMap<String,Session> sessions = new ConcurrentHashMap<>();
     // link client <socket>, to server <session>
     private final ConcurrentMap<Socket, Session> socketSessions = new ConcurrentHashMap<>();
 
-    Leaderboard leaderboard = new Leaderboard();
-
     private Server(int port) throws IOException {
         serverSocket = new ServerSocket(port);
         System.out.println("Server started on port " + port);
+    }
+
+    public static Leaderboard getLeaderboard() {
+        return leaderboard;
     }
 
     public static Server get() throws IOException {
@@ -47,6 +47,7 @@ public class Server {
             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
             ObjectInputStream  in  = new ObjectInputStream(socket.getInputStream())
         ) {
+            out.reset();
             out.flush();
             while (true) {
                 Object obj = in.readObject();
@@ -131,7 +132,9 @@ public class Server {
                         }
                     }
                     else if ("LEADERBOARD".equalsIgnoreCase(line)) {
-                        out.writeObject(this.leaderboard);
+                        Leaderboard lb = Leaderboard.load();
+                        out.reset();
+                        out.writeObject(lb);
                         out.flush();
                     }
                     else {

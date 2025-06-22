@@ -7,7 +7,7 @@ public class PlayerScore implements Comparable<PlayerScore>, Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private Integer score = 0;
+    private int score = 0;
     private final Player player;
 
     public PlayerScore(Player p) {

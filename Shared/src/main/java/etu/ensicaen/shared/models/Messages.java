@@ -7,4 +7,6 @@ public class Messages {
     public static final String ILLEGAL_MESSAGE = "You cannot make illegal move / Vous ne pouvez pas jouer un coup interdit";
     public static final String ILLEGAL_MOVE    = "Illegal move / Mouvement interdit";
     public static final String OVER_MESSAGE    = "Game over / Partie terminé";
+    public static final String NEW_HIGH_SCORE  = "You won ! New personal best / Vous avez gagné ! Nouveau record personnel";
+    public static final String CANT_FEED       = "No more possible moves / Plus aucun coup possible";
 }

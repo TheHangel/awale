@@ -23,10 +23,10 @@ public class Game implements Serializable {
     public Game(Player player1, Player player2) {
         //handle player
         if (player1 == null || player2 == null) {
-            throw new IllegalArgumentException("Players cannot be null.");
+            throw new GameException("Players cannot be null.");
         }
         if (player1.equals(player2)) {
-            throw new IllegalArgumentException("Players must be different.");
+            throw new GameException("Players must be different.");
         }
 
         this.players[0] = player1;
