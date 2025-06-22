@@ -36,12 +36,12 @@ public class Client {
         return (resp instanceof String) ? (String) resp : null;
     }
 
-    public String host() throws IOException, ClassNotFoundException {
-        return this.sendCommand("HOST");
+    public String host(String username) throws IOException, ClassNotFoundException {
+        return this.sendCommand("HOST:" + username);
     }
 
-    public String join(String id) throws IOException, ClassNotFoundException {
-        return this.sendCommand("JOIN:" + id);
+    public String join(String id, String username) throws IOException, ClassNotFoundException {
+        return this.sendCommand("JOIN:" + id + ":" + username);
     }
 
     public Game play() throws IOException, ClassNotFoundException {

@@ -11,16 +11,16 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="etu.ensicaen.client.views.MainMenuView">
    <children>
-      <TabPane layoutX="257.0" layoutY="78.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="244.0" prefWidth="323.0" tabClosingPolicy="UNAVAILABLE">
+      <TabPane layoutX="257.0" layoutY="115.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="215.0" prefWidth="323.0" tabClosingPolicy="UNAVAILABLE">
         <tabs>
           <Tab fx:id="hostTab" text="Host / Héberger">
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                    <Button layoutX="110.0" layoutY="43.0" mnemonicParsing="false" onAction="#onHostAction" text="Host / Héberger" />
-                        <Button fx:id="playButtonHost" layoutX="122.0" layoutY="141.0" mnemonicParsing="false" onAction="#onPlayAction" text="Play / Jouer" />
-                        <Text fx:id="waitingPlayersText" layoutX="107.0" layoutY="96.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Waiting for players..." />
-                        <TextField fx:id="sessionIdTextFieldResult" editable="false" layoutX="87.0" layoutY="108.0" />
+                    <Button layoutX="110.0" layoutY="32.0" mnemonicParsing="false" onAction="#onHostAction" text="Host / Héberger" />
+                        <Button fx:id="playButtonHost" layoutX="122.0" layoutY="130.0" mnemonicParsing="false" onAction="#onPlayAction" text="Play / Jouer" />
+                        <Text fx:id="waitingPlayersText" layoutX="120.0" layoutY="85.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Session created" />
+                        <TextField fx:id="sessionIdTextFieldResult" editable="false" layoutX="87.0" layoutY="97.0" />
                      </children>
                   </AnchorPane>
             </content>
@@ -29,7 +29,7 @@
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <Button layoutX="209.0" layoutY="48.0" mnemonicParsing="false" onAction="#onJoinAction" text="Join / Rejoindre" />
+                        <Button layoutX="192.0" layoutY="48.0" mnemonicParsing="false" onAction="#onJoinAction" text="Join / Rejoindre" />
                         <TextField fx:id="sessionIdTextField" layoutX="30.0" layoutY="48.0" />
                         <Button fx:id="playButtonJoin" layoutX="122.0" layoutY="150.0" mnemonicParsing="false" onAction="#onPlayAction" text="Play / Jouer" />
                         <Text layoutX="30.0" layoutY="44.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Insert id / Insérez l'id" />
@@ -48,5 +48,7 @@
       </Text>
       <ListView fx:id="leaderboardListView" layoutX="31.0" layoutY="100.0" prefHeight="200.0" prefWidth="200.0" />
       <Text layoutX="62.0" layoutY="83.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Leaderboard / Classement" />
+      <TextField fx:id="usernameTextField" layoutX="405.0" layoutY="75.0" />
+      <Text layoutX="284.0" layoutY="92.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Username / Pseudo" />
    </children>
 </AnchorPane>

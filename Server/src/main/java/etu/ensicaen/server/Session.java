@@ -20,20 +20,20 @@ public class Session {
     private ObjectOutputStream hostOut;
     private ObjectOutputStream guestOut;
 
-    public Session(Socket hostSocket) {
+    public Session(Socket hostSocket, String username) {
         this.id = UUID.randomUUID().toString().substring(0, 8);
         this.hostSocket = hostSocket;
-        this.players[0] = new Player("Player 1");
+        this.players[0] = new Player(username);
     }
 
     public String getId() { return id; }
 
     public Game getCurrentGame() { return currentGame; }
 
-    public synchronized boolean addGuest(Socket socket) {
+    public synchronized boolean addGuest(Socket socket, String username) {
         if (guestSocket == null) {
             guestSocket = socket;
-            this.players[1] = new Player("Player 2");
+            this.players[1] = new Player(username);
             return true;
         }
         return false;
