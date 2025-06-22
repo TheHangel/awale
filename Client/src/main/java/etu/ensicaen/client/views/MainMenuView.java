@@ -2,20 +2,14 @@ package etu.ensicaen.client.views;
 
 import etu.ensicaen.client.Client;
 import etu.ensicaen.client.viewsmodels.MainMenuViewModel;
-import etu.ensicaen.shared.models.Leaderboard;
 import etu.ensicaen.shared.models.PlayerScore;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.collections.transformation.SortedList;
-import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.text.Text;
 
 import java.io.IOException;
-import java.util.Comparator;
 
 public class MainMenuView {
     private MainMenuViewModel viewModel;
@@ -25,6 +19,9 @@ public class MainMenuView {
 
     @FXML
     public TextField sessionIdTextField, sessionIdTextFieldResult;
+
+    @FXML
+    public TextField usernameTextField;
 
     @FXML
     public Button playButtonJoin, playButtonHost;
@@ -47,6 +44,13 @@ public class MainMenuView {
         this.hostTab.disableProperty().bind(this.viewModel.isJoinedProperty());
         this.joinTab.disableProperty().bind(this.viewModel.isWaitingVisibleProperty());
         this.joinedText.visibleProperty().bind(this.viewModel.isJoinedProperty());
+
+        this.viewModel.usernameProperty().bind(this.usernameTextField.textProperty());
+
+        this.usernameTextField.disableProperty().bind(
+                this.viewModel.isJoinedProperty()
+                .or(this.viewModel.isWaitingVisibleProperty())
+        );
 
         leaderboardListView.setItems(viewModel.leaderboardProperty());
 

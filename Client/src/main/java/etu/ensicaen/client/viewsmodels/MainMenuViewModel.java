@@ -14,7 +14,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 
 import java.io.IOException;
-import java.util.Comparator;
 
 public class MainMenuViewModel {
     private final MainMenu model;
@@ -26,6 +25,8 @@ public class MainMenuViewModel {
     private final BooleanProperty isJoined = new SimpleBooleanProperty(false);
 
     private final StringProperty sessionId = new SimpleStringProperty();
+
+    private final StringProperty username = new SimpleStringProperty();
 
     private final ReadOnlyListWrapper<PlayerScore> leaderboard =
             new ReadOnlyListWrapper<>(FXCollections.observableArrayList());
@@ -45,6 +46,10 @@ public class MainMenuViewModel {
 
     public StringProperty sessionIdProperty() {
         return this.sessionId;
+    }
+
+    public StringProperty usernameProperty() {
+        return this.username;
     }
 
     public ReadOnlyListProperty<PlayerScore> leaderboardProperty() {
@@ -90,7 +95,10 @@ public class MainMenuViewModel {
 
     @FXML
     public void onHost() {
-        Task<String> task = this.model.host();
+        if(this.username.get().isEmpty()) {
+            return;
+        }
+        Task<String> task = this.model.host(this.username.get());
         task.setOnSucceeded(ev -> {
             String sessionString = task.getValue();
             String sessionId = sessionString.substring(11);
@@ -103,7 +111,10 @@ public class MainMenuViewModel {
 
     @FXML
     public void onJoin(String id) {
-        Task<String> task = this.model.join(id);
+        if(this.username.get().isEmpty()) {
+            return;
+        }
+        Task<String> task = this.model.join(id, this.username.get());
         task.setOnSucceeded(ev -> {
             if(task.getValue().startsWith("ERROR")) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
