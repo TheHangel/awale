@@ -10,7 +10,7 @@ import java.net.Socket;
 import java.util.UUID;
 
 public class Session {
-    private static final boolean test = true;
+    private static final boolean test = false;
     private final String id;
     private final Socket hostSocket;
     private       Socket guestSocket;
