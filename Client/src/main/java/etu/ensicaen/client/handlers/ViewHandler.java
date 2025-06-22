@@ -37,6 +37,8 @@ public class ViewHandler {
         Parent root = loader.load();
         GameView controller = loader.getController();
         controller.init(new GameViewModel(game, this, isHost));
+
+        stage.setResizable(false);
         stage.setScene(new Scene(root));
         stage.setTitle("Awale – Jeu");
     }
