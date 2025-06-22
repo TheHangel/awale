@@ -48,7 +48,7 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
               </rowConstraints>
                <children>
-                  <Button fx:id="tile10" maxHeight="1.7976931348623157E308" maxWidth="60.0" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text="1" GridPane.columnIndex="1">
+                  <Button fx:id="tile10" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="30.0" minWidth="64.0" mnemonicParsing="false" text="1" GridPane.columnIndex="1">
                      <GridPane.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </GridPane.margin>
@@ -56,7 +56,7 @@
                         <Font name="Comic Sans MS Bold" size="24.0" />
                      </font>
                   </Button>
-                  <Button fx:id="tile11" maxHeight="1.7976931348623157E308" maxWidth="60.0" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text="1">
+                  <Button fx:id="tile11" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="30.0" minWidth="64.0" mnemonicParsing="false" text="1">
                      <GridPane.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </GridPane.margin>
@@ -64,7 +64,7 @@
                         <Font name="Comic Sans MS Bold" size="24.0" />
                      </font>
                   </Button>
-                  <Button fx:id="tile9" maxHeight="1.7976931348623157E308" maxWidth="60.0" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text="1" GridPane.columnIndex="2">
+                  <Button fx:id="tile9" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="30.0" minWidth="64.0" mnemonicParsing="false" text="1" GridPane.columnIndex="2">
                      <GridPane.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </GridPane.margin>
@@ -72,7 +72,7 @@
                         <Font name="Comic Sans MS Bold" size="24.0" />
                      </font>
                   </Button>
-                  <Button fx:id="tile8" maxHeight="1.7976931348623157E308" maxWidth="60.0" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text="1" GridPane.columnIndex="3">
+                  <Button fx:id="tile8" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="30.0" minWidth="64.0" mnemonicParsing="false" text="1" GridPane.columnIndex="3">
                      <GridPane.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </GridPane.margin>
@@ -80,7 +80,7 @@
                         <Font name="Comic Sans MS Bold" size="24.0" />
                      </font>
                   </Button>
-                  <Button fx:id="tile0" maxHeight="1.7976931348623157E308" maxWidth="60.0" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text="1" GridPane.rowIndex="1">
+                  <Button fx:id="tile0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="30.0" minWidth="64.0" mnemonicParsing="false" text="1" GridPane.rowIndex="1">
                      <GridPane.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </GridPane.margin>
@@ -88,7 +88,7 @@
                         <Font name="Comic Sans MS Bold" size="24.0" />
                      </font>
                   </Button>
-                  <Button fx:id="tile1" maxHeight="1.7976931348623157E308" maxWidth="60.0" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text="1" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                  <Button fx:id="tile1" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="30.0" minWidth="64.0" mnemonicParsing="false" text="1" GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <GridPane.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </GridPane.margin>
@@ -96,7 +96,7 @@
                         <Font name="Comic Sans MS Bold" size="24.0" />
                      </font>
                   </Button>
-                  <Button fx:id="tile2" maxHeight="1.7976931348623157E308" maxWidth="60.0" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text="1" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                  <Button fx:id="tile2" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="30.0" minWidth="64.0" mnemonicParsing="false" text="1" GridPane.columnIndex="2" GridPane.rowIndex="1">
                      <GridPane.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </GridPane.margin>
@@ -104,7 +104,7 @@
                         <Font name="Comic Sans MS Bold" size="24.0" />
                      </font>
                   </Button>
-                  <Button fx:id="tile3" maxHeight="1.7976931348623157E308" maxWidth="60.0" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text="1" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                  <Button fx:id="tile3" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="30.0" minWidth="64.0" mnemonicParsing="false" text="33" GridPane.columnIndex="3" GridPane.rowIndex="1">
                      <GridPane.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </GridPane.margin>
@@ -112,7 +112,7 @@
                         <Font name="Comic Sans MS Bold" size="24.0" />
                      </font>
                   </Button>
-                  <Button fx:id="tile7" maxHeight="1.7976931348623157E308" maxWidth="60.0" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text="1" GridPane.columnIndex="4">
+                  <Button fx:id="tile7" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="30.0" minWidth="64.0" mnemonicParsing="false" text="1" GridPane.columnIndex="4">
                      <GridPane.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </GridPane.margin>
@@ -120,7 +120,7 @@
                         <Font name="Comic Sans MS Bold" size="24.0" />
                      </font>
                   </Button>
-                  <Button fx:id="tile4" maxHeight="1.7976931348623157E308" maxWidth="60.0" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" GridPane.columnIndex="4" GridPane.rowIndex="1">
+                  <Button fx:id="tile4" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="30.0" minWidth="64.0" mnemonicParsing="false" GridPane.columnIndex="4" GridPane.rowIndex="1">
                      <GridPane.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </GridPane.margin>
@@ -128,7 +128,7 @@
                         <Font name="Comic Sans MS Bold" size="24.0" />
                      </font>
                   </Button>
-                  <Button fx:id="tile6" maxHeight="1.7976931348623157E308" maxWidth="60.0" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text="1" GridPane.columnIndex="5">
+                  <Button fx:id="tile6" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="30.0" minWidth="64.0" mnemonicParsing="false" text="1" GridPane.columnIndex="5">
                      <GridPane.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </GridPane.margin>
@@ -136,7 +136,7 @@
                         <Font name="Comic Sans MS Bold" size="24.0" />
                      </font>
                   </Button>
-                  <Button fx:id="tile5" maxHeight="1.7976931348623157E308" maxWidth="60.0" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" GridPane.columnIndex="5" GridPane.rowIndex="1">
+                  <Button fx:id="tile5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="30.0" minWidth="64.0" mnemonicParsing="false" GridPane.columnIndex="5" GridPane.rowIndex="1">
                      <GridPane.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </GridPane.margin>
@@ -160,7 +160,7 @@
                   </Text>
                </children>
                <GridPane.margin>
-                  <Insets right="60.0" />
+                  <Insets left="2.0" right="60.0" />
                </GridPane.margin>
                <padding>
                   <Insets top="20.0" />
