@@ -1,7 +1,6 @@
 package etu.ensicaen.shared.models;
 
-import java.io.Serial;
-import java.io.Serializable;
+import java.io.*;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.TreeSet;
@@ -9,6 +8,8 @@ import java.util.TreeSet;
 public class Leaderboard extends TreeSet<PlayerScore> implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
+
+    private static final String FILE_PATH = "leaderboard.dat";
 
     private static class ScoreComparator implements Comparator<PlayerScore>, Serializable {
         @Serial private static final long serialVersionUID = 1L;
@@ -33,11 +34,40 @@ public class Leaderboard extends TreeSet<PlayerScore> implements Serializable {
         return super.add(ps);
     }
 
-    public void addOrUpdate(PlayerScore ps) {
+    public void updateScore(PlayerScore ps) {
         add(ps);
     }
 
     public Iterator<PlayerScore> iteratorSorted() {
         return super.iterator();
     }
+
+    public static Leaderboard load() {
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(FILE_PATH))) {
+            return (Leaderboard) in.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            // Fichier inexistant ou corrompu => on retourne un nouveau leaderboard vide
+            return new Leaderboard();
+        }
+    }
+
+    public static void save(Leaderboard leaderboard) {
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(FILE_PATH))) {
+            out.writeObject(leaderboard);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean isNewHighScore(PlayerScore newScore) {
+        for (PlayerScore existing : this) {
+            if (existing.getPlayer().equals(newScore.getPlayer())) {
+                return newScore.getScore() > existing.getScore();
+            }
+        }
+        //if player isn't in lb, it's a new personal best for them
+        return true;
+    }
+
+
 }
