@@ -93,7 +93,7 @@ public class Session {
         this.currentGame.getPlayerScores()[0].increase(23);
         this.currentGame.getPlayerScores()[1].increase(3);
 
-        int[] seedDistrib = {6, 3, 4, 0, 1, 2, 1, 1, 1, 2, 2, 0}; //test win
+        int[] seedDistrib = {6, 3, 4, 0, 1, 2, 2, 1, 1, 2, 2, 0}; //test win
         for (int i = 0; i < seedDistrib.length; i++) {
             this.currentGame.getGameBoard().getNodeAt(i).getTile().setSeeds(seedDistrib[i]);
         }

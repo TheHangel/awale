@@ -37,6 +37,8 @@ public class MainMenuView {
 
     public void init(MainMenuViewModel vm) {
         this.viewModel = vm;
+        this.viewModel.loadLeaderboard();
+
         this.waitingPlayersText.visibleProperty().bind(this.viewModel.isWaitingVisibleProperty());
         this.sessionIdTextFieldResult.visibleProperty().bind(this.viewModel.isWaitingVisibleProperty());
         this.playButtonHost.visibleProperty().bind(this.viewModel.isWaitingVisibleProperty());
@@ -61,7 +63,7 @@ public class MainMenuView {
             }
         });
 
-        viewModel.loadLeaderboard();
+        leaderboardListView.refresh();
     }
 
     @FXML

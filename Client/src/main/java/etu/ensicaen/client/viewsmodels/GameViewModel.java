@@ -99,7 +99,12 @@ public class GameViewModel {
         }).start();
     }
 
-    public void onBackToMenu() throws IOException {
-        viewHandler.openMainMenu();
+    public void onBackToMenu() {
+        try {
+            Client.reconnect();
+            viewHandler.openMainMenu();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

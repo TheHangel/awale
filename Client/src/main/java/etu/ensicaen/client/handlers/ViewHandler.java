@@ -21,9 +21,7 @@ public class ViewHandler {
     }
 
     public void openMainMenu() throws IOException {
-        FXMLLoader loader = new FXMLLoader(
-                getClass().getResource("/etu/ensicaen/client/main-menu-view.fxml"));
-
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/etu/ensicaen/client/main-menu-view.fxml"));
         Parent root = loader.load();
         MainMenuView controller = loader.getController();
         controller.init(new MainMenuViewModel(this));

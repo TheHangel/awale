@@ -47,6 +47,7 @@ public class Server {
             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
             ObjectInputStream  in  = new ObjectInputStream(socket.getInputStream())
         ) {
+            out.reset();
             out.flush();
             while (true) {
                 Object obj = in.readObject();
@@ -132,7 +133,9 @@ public class Server {
                         }
                     }
                     else if ("LEADERBOARD".equalsIgnoreCase(line)) {
-                        out.writeObject(leaderboard);
+                        Leaderboard lb = Leaderboard.load();
+                        out.reset();
+                        out.writeObject(lb);
                         out.flush();
                     }
                     else {

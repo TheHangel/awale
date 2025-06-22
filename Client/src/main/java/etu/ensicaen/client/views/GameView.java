@@ -122,11 +122,7 @@ public class GameView {
                             else {
                                 alert.setTitle(Messages.OVER_MESSAGE);
                                 alert.setOnCloseRequest(event -> {
-                                    try {
-                                        viewModel.onBackToMenu();
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
+                                    viewModel.onBackToMenu();
                                 });
                             }
                             alert.setHeaderText(message);
