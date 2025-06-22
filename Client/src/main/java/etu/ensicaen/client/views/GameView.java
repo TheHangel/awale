@@ -13,21 +13,38 @@ import javafx.scene.text.Text;
 
 import java.io.IOException;
 
+/**
+ * The GameView class is the controller for the game interface in JavaFX.
+ * It handles the user interface binding with the {@link GameViewModel} and listens
+ * to updates from the server to keep the game state synchronized between players.
+ */
 public class GameView {
     private GameViewModel viewModel;
 
+    // Tile buttons representing the 12 pits on the Awalé board
     @FXML private Button tile0, tile1, tile2, tile3,
                           tile4, tile5, tile6, tile7,
                           tile8, tile9, tile10, tile11;
+
+    // Player information (names and scores)
     @FXML private Text playerNameLeftText, playerNameRightText;
     @FXML private Text playerScoreLeftText, playerScoreRightText;
 
+    // Text indicating whose turn it is
     @FXML
     private Text playerTurnText;
 
+    // Forfeit button to allow a player to forfeit
     @FXML
     private Button forfeitButton;
 
+    /**
+     * Initializes the GameView by binding all UI components to the properties
+     * of the associated {@link GameViewModel}, and sets up a background thread to
+     * listen for updates from the server.
+     *
+     * @param viewModel the view model containing game logic and observable properties
+     */
     public void init(GameViewModel viewModel) {
         this.viewModel = viewModel;
         // bindings
@@ -137,11 +154,21 @@ public class GameView {
         }).start();
     }
 
+    /**
+     * Called when the back button is clicked.
+     * Triggers the return to the main menu.
+     *
+     * @throws IOException if the navigation fails
+     */
     @FXML
     private void onBackAction() throws IOException {
         viewModel.onBackToMenu();
     }
 
+    /**
+     * Called when the forfeit button is clicked.
+     * Asks the view model to start a forfeit request.
+     */
     @FXML
     private void onForfeitAction() {
         this.viewModel.askForfeit();
