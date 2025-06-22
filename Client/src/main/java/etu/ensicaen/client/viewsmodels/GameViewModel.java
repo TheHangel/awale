@@ -13,8 +13,18 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * ViewModel for the game view, responsible for managing the game state and
+ * providing properties to the view.
+ */
 public class GameViewModel {
+    /**
+     * The model representing the current game state.
+     */
     private Game model;
+    /**
+     * The view handler to manage view transitions.
+     */
     private final ViewHandler viewHandler;
 
     private final BooleanProperty isHost;
@@ -28,6 +38,13 @@ public class GameViewModel {
 
     private final BooleanProperty canForfeit = new SimpleBooleanProperty(false);
 
+    /**
+     * Constructor for GameViewModel.
+     *
+     * @param initial The initial game state.
+     * @param vh      The view handler to manage view transitions.
+     * @param isHost  Boolean property indicating if the client is the host.
+     */
     public GameViewModel(Game initial, ViewHandler vh, BooleanProperty isHost) {
         this.viewHandler = vh;
         this.model = initial;
@@ -39,6 +56,11 @@ public class GameViewModel {
         bind();
     }
 
+    /**
+     * Sets the game model and updates the view properties accordingly.
+     *
+     * @param g The game model to set.
+     */
     public void setGame(Game g) {
         this.model = g;
         updateTurnText();
@@ -46,10 +68,17 @@ public class GameViewModel {
         canForfeit.set( model != null && model.canForfeit() );
     }
 
+    /**
+     * Updates the game model and view properties.
+     */
     public ReadOnlyBooleanProperty isHostProperty() {
         return this.isHost;
     }
 
+    /**
+     * Binds the view properties to the game model.
+     * This method initializes player names, scores, and seed counts for each pit.
+     */
     private void bind() {
         if (model == null) return;
         // initialize names and scores
@@ -65,11 +94,21 @@ public class GameViewModel {
         }
     }
 
+    /**
+     * Updates the view properties based on the current game state.
+     * This method is called when the game state changes.
+     */
     private void updateTurnText() {
         int turnIndex = model.getCurrentPlayerIndex();
         playerTurn.set(model.getPlayers()[turnIndex].getUsername());
     }
 
+    /**
+     * Returns the seed count for a specific pit index.
+     *
+     * @param idx The index of the pit.
+     * @return The read-only integer property representing the seed count.
+     */
     public ReadOnlyIntegerProperty seedCountProperty(int idx) {
         return seedCounts.get(idx);
     }
@@ -81,6 +120,12 @@ public class GameViewModel {
     public ReadOnlyStringProperty  playerTurnProperty() {return playerTurn;}
     public ReadOnlyBooleanProperty canForfeitProperty() {return canForfeit;}
 
+    /**
+     * Handles the click event on a pit.
+     * This method sends a request to the server to select the specified pit.
+     *
+     * @param idx The index of the pit that was clicked.
+     */
     public void onPitClicked(int idx) {
         new Thread(() -> {
             try {
@@ -91,6 +136,10 @@ public class GameViewModel {
         }).start();
     }
 
+    /**
+     * Requests the server to forfeit the game.
+     * This method is called when the player chooses to forfeit.
+     */
     public void askForfeit() {
         new Thread(() -> {
             try {
@@ -101,6 +150,10 @@ public class GameViewModel {
         }).start();
     }
 
+    /**
+     * Handles the event when the player wants to return to the main menu.
+     * This method sends a request to leave the game and then opens the main menu view.
+     */
     public void onBackToMenu() {
         Task<Void> task = new Task<>() {
             @Override

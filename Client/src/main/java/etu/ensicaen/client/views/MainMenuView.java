@@ -11,6 +11,11 @@ import javafx.scene.text.Text;
 
 import java.io.IOException;
 
+/**
+ * Controller class for the Main Menu view in the JavaFX application.
+ * Handles interactions with the UI components and binds them to the {@link MainMenuViewModel}.
+ * Manages user input for hosting or joining a session and displays the leaderboard.
+ */
 public class MainMenuView {
     private MainMenuViewModel viewModel;
 
@@ -32,6 +37,11 @@ public class MainMenuView {
     @FXML
     public ListView leaderboardListView;
 
+    /**
+     * Initializes the view with the provided view model, sets up bindings, and loads leaderboard data.
+     *
+     * @param vm the view model to bind the UI components to
+     */
     public void init(MainMenuViewModel vm) {
         this.viewModel = vm;
         this.viewModel.loadLeaderboard();
@@ -71,21 +81,41 @@ public class MainMenuView {
         leaderboardListView.refresh();
     }
 
+    /**
+     * Called when the "Play" button is clicked. Starts the game.
+     *
+     * @param actionEvent the event triggered by the button
+     */
     @FXML
     private void onPlayAction(ActionEvent actionEvent) {
         this.viewModel.onPlay();
     }
 
+    /**
+     * Called when the "Host" button is clicked. Hosts a new game session.
+     *
+     * @param actionEvent the event triggered by the button
+     */
     @FXML
     private void onHostAction(ActionEvent actionEvent) {
         this.viewModel.onHost();
     }
 
+    /**
+     * Called when the "Join" button is clicked. Attempts to join a session using the provided ID.
+     *
+     * @param actionEvent the event triggered by the button
+     */
     @FXML
     private void onJoinAction(ActionEvent actionEvent) {
         this.viewModel.onJoin(sessionIdTextField.getText().trim());
     }
 
+    /**
+     * Called when the "Quit" button is clicked. Closes the client and exits the application.
+     *
+     * @throws IOException if an error occurs while closing the client
+     */
     @FXML
     private void onQuitAction() throws IOException {
         Client.get().close();

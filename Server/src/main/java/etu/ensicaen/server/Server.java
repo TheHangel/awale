@@ -10,25 +10,47 @@ import java.net.SocketException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+/**
+ * The main server class responsible for managing incoming client connections,
+ * creating and managing game sessions, and routing commands between clients and the server logic.
+ */
 public class Server {
     private static Server server;
     private final ServerSocket serverSocket;
     private static final Leaderboard leaderboard = Leaderboard.load();
 
-    // link <id session> to <session>
+    /** Maps session ID to corresponding {@link Session} object. */
     private final ConcurrentMap<String,Session> sessions = new ConcurrentHashMap<>();
-    // link client <socket>, to server <session>
+
+    /** Maps each client's {@link Socket} to its {@link Session}. */
     private final ConcurrentMap<Socket, Session> socketSessions = new ConcurrentHashMap<>();
 
+    /**
+     * Constructs the server and binds it to the specified port.
+     *
+     * @param port the port to bind the server socket to
+     * @throws IOException if an I/O error occurs when opening the socket
+     */
     private Server(int port) throws IOException {
         serverSocket = new ServerSocket(port);
         System.out.println("Server started on port " + port);
     }
 
+    /**
+     * Retrieves the static leaderboard instance.
+     *
+     * @return the {@link Leaderboard}
+     */
     public static Leaderboard getLeaderboard() {
         return leaderboard;
     }
 
+    /**
+     * Returns the singleton instance of the server, creating it if needed.
+     *
+     * @return the singleton {@link Server} instance
+     * @throws IOException if the server cannot be started
+     */
     public static Server get() throws IOException {
         if(server == null) {
             server = new Server(Config.port());
@@ -36,6 +58,12 @@ public class Server {
         return server;
     }
 
+    /**
+     * Starts listening for incoming client connections and spawns a new thread
+     * to handle each client.
+     *
+     * @throws IOException if the server socket fails
+     */
     public void start() throws IOException {
         while (true) {
             // attente message client
@@ -45,6 +73,12 @@ public class Server {
         }
     }
 
+    /**
+     * Handles all communication with a connected client.
+     * Processes commands such as HOST, JOIN, PLAY, SELECT, FORFEIT, and LEAVE.
+     *
+     * @param socket the client socket
+     */
     private void handleClient(Socket socket) {
         try (
             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());

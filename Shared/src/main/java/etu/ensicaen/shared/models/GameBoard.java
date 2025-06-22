@@ -5,15 +5,31 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents the Awalé game board. It is composed of 12 {@link Node} instances,
+ * each containing a {@link Tile} that belongs to one of the two players.
+ * Handles seed distribution, capturing, and move validation according to the game rules.
+ */
 public class GameBoard implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
+    /** Total number of tiles on the board (must be even). */
     public static final int BOARD_SIZE = 12;
+
+    /** Total number of seeds initially in the game. */
     public static final int SEEDS_NUMBER = 48;
 
     private final List<Node> board;
 
+    /**
+     * Constructs a new game board and initializes it with seeds and player ownership.
+     * Links the board nodes in a circular doubly-linked list.
+     *
+     * @param player1 The first player (owns the first half of the board).
+     * @param player2 The second player (owns the second half of the board).
+     * @throws GameBoardException if board size is not even or seeds are not divisible.
+     */
     public GameBoard(Player player1, Player player2) { //Rule 2
         if(BOARD_SIZE % 2 != 0) {
             throw new GameBoardException("Board size must be even.");
@@ -42,6 +58,11 @@ public class GameBoard implements Serializable {
         }
     }
 
+    /**
+     * Private constructor to create a deep copy of a game board.
+     *
+     * @param other The board to copy.
+     */
     private GameBoard(GameBoard other) {
         this.board = new ArrayList<>(other.board.size());
         for (Node node : other.board) {
@@ -59,15 +80,34 @@ public class GameBoard implements Serializable {
         }
     }
 
+    /**
+     * Returns the full list of board nodes.
+     *
+     * @return A list of {@link Node} instances.
+     */
     public List<Node> getBoard() {
         return board;
     }
 
+    /**
+     * Returns the node at the specified index, with circular indexing.
+     *
+     * @param index Index of the node.
+     * @return The {@link Node} at the given index.
+     */
     public Node getNodeAt(int index) {
         return board.get(index % BOARD_SIZE);
     }
 
-    //distribut seeds and capture them
+    /**
+     * Distributes seeds starting from a tile and attempts to capture seeds at the end.
+     * Implements Rules 3, 4, 5, and 7.
+     *
+     * @param index Index of the tile to start distribution from.
+     * @param player The player performing the move.
+     * @return Number of seeds captured (may be 0).
+     * @throws GameBoardException if the move is invalid.
+     */
     public int distributeSeeds(int index, Player player) { //Rule 3
         int score = 0;
         Node startNode = getNodeAt(index);
@@ -96,8 +136,15 @@ public class GameBoard implements Serializable {
         return score;
     }
 
-    //on a board that has all the seeds moved
-    public boolean willCaptureEverything(int endNodeIdx, Player player){ // handles rule 7
+    /**
+     * Simulates a capture from the end tile and checks if it would result
+     * in capturing all opponent seeds (Rule 7).
+     *
+     * @param endNodeIdx Index of the ending tile.
+     * @param player The player performing the capture.
+     * @return true if the move would capture all opponent seeds.
+     */
+    public boolean willCaptureEverything(int endNodeIdx, Player player){
         GameBoard boardCopy = new GameBoard(this);
         boardCopy.captureSeeds(endNodeIdx, player); // simulate capture
 
@@ -110,8 +157,15 @@ public class GameBoard implements Serializable {
         return seedsRemaining == 0;
     }
 
-    //doesn't check for rule 7
-    public int captureSeeds(int endTileIndex, Player player) { // handles rule 4
+    /**
+     * Captures seeds from the board starting from the given index.
+     * Implements Rule 4. Doesn't check for rule 7.
+     *
+     * @param endTileIndex Index of the last tile where a seed was placed.
+     * @param player The player capturing seeds.
+     * @return Number of seeds captured.
+     */
+    public int captureSeeds(int endTileIndex, Player player) {
         Node currentNode = getNodeAt(endTileIndex);
         if (currentNode.getTile().getOwner() == player) {
             return 0; // Don't capture seeds from a tile that belongs to the player
@@ -126,7 +180,13 @@ public class GameBoard implements Serializable {
         return capturedSeeds;
     }
 
-    public ArrayList<Integer> getPossibleMoves(Player player) { //checks rule 6
+    /**
+     * Computes all legal moves for the player, Rule 6.
+     *
+     * @param player The player whose turn it is.
+     * @return A list of indices representing valid moves.
+     */
+    public ArrayList<Integer> getPossibleMoves(Player player) {
         ArrayList<Integer> possibleMoves = new ArrayList<>();
         boolean opponentHasSeeds = this.opponentHasSeeds(player);
 
@@ -149,6 +209,12 @@ public class GameBoard implements Serializable {
         return possibleMoves;
     }
 
+    /**
+     * Checks whether the opponent of the given player has any seeds left.
+     *
+     * @param currentPlayer The player to check against.
+     * @return true if opponent has at least one seed.
+     */
     private boolean opponentHasSeeds(Player currentPlayer) {
         for (Node node : board) {
             if (node.getTile().getOwner() != currentPlayer && node.getTile().getSeeds() > 0) {
@@ -158,7 +224,13 @@ public class GameBoard implements Serializable {
         return false;
     }
 
-    public int takeRemainingSeeds() { //handles rule 8
+    /**
+     * Removes all remaining seeds on the board and returns the total number taken.
+     * Used at the end of the game (Rule 8).
+     *
+     * @return Total number of seeds taken.
+     */
+    public int takeRemainingSeeds() {
         int totalSeeds = 0;
         for (Node node : board) {
             totalSeeds += node.getTile().takeAllSeeds();
@@ -166,7 +238,13 @@ public class GameBoard implements Serializable {
         return totalSeeds;
     }
 
-    public int countRemainingSeeds() { //handles rule 8
+    /**
+     * Counts the total number of seeds currently on the board.
+     * Used to determine endgame conditions (Rule 8).
+     *
+     * @return Number of seeds on the board.
+     */
+    public int countRemainingSeeds() {
         int totalSeeds = 0;
         for (Node node : board) {
             totalSeeds += node.getTile().getSeeds();
