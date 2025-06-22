@@ -1,10 +1,12 @@
 package etu.ensicaen.server;
 
 import etu.ensicaen.shared.models.Leaderboard;
+import etu.ensicaen.shared.models.Messages;
 
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -51,7 +53,13 @@ public class Server {
             out.reset();
             out.flush();
             while (true) {
-                Object obj = in.readObject();
+                Object obj;
+                try {
+                    obj = in.readObject();
+                } catch (EOFException | SocketException eof) {
+                    System.out.println("Client disconnected: " + socket.getRemoteSocketAddress());
+                    break;
+                }
                 if (obj instanceof String) {
                     String line = ((String) obj).trim();
 
@@ -144,11 +152,12 @@ public class Server {
                         if (session != null) {
                             ObjectOutputStream otherOut = session.getOtherOutputStream(socket);
                             if (otherOut != null) {
-                                session.broadcastTo(otherOut, "PLAYER_LEFT");
-                                sessions.remove(session.getId());
-                                socketSessions.remove(socket);
+                                session.broadcastTo(otherOut, Messages.LEAVE_MESSAGE);
                             }
+                            sessions.remove(session.getId());
+                            socketSessions.remove(socket);
                         }
+                        break;
                     }
                     else {
                         // unknown command

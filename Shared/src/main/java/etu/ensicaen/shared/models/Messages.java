@@ -9,5 +9,5 @@ public class Messages {
     public static final String OVER_MESSAGE    = "Game over / Partie terminé";
     public static final String NEW_HIGH_SCORE  = "You won ! New personal best / Vous avez gagné ! Nouveau record personnel";
     public static final String CANT_FEED       = "No more possible moves / Plus aucun coup possible";
-    public static final String LEAVE_MESSAGE   = "Your opponent leaved / Votre adveersaire est parti";
+    public static final String LEAVE_MESSAGE   = "Your opponent leaved / Votre adversaire est parti";
 }

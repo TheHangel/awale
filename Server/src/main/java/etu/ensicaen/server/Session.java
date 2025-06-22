@@ -47,16 +47,14 @@ public class Session {
         this.guestOut = out;
     }
 
-    public synchronized void broadcastGame() throws IOException {
+    public synchronized void broadcastGame() {
         if (hostOut != null) {
-            hostOut.reset();
-            hostOut.writeUnshared(this.currentGame);
-            hostOut.flush();
+            try { hostOut.reset(); hostOut.writeUnshared(currentGame); hostOut.flush(); }
+            catch(IOException e){ hostOut = null; }
         }
         if (guestOut != null) {
-            guestOut.reset();
-            guestOut.writeUnshared(this.currentGame);
-            guestOut.flush();
+            try { guestOut.reset(); guestOut.writeUnshared(currentGame); guestOut.flush(); }
+            catch(IOException e){ guestOut = null; }
         }
     }
 
@@ -70,10 +68,16 @@ public class Session {
         guestOut.flush();
     }
 
-    public synchronized void broadcastTo(ObjectOutputStream out, String message) throws IOException {
-        out.reset();
-        out.writeUnshared(message);
-        out.flush();
+    public synchronized void broadcastTo(ObjectOutputStream out, String message) {
+        if (out == null) return;
+        try {
+            out.reset();
+            out.writeUnshared(message);
+            out.flush();
+        } catch (IOException e) {
+            if (out == hostOut)   hostOut = null;
+            if (out == guestOut)  guestOut = null;
+        }
     }
 
     public boolean isFull() {

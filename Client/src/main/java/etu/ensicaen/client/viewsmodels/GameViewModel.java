@@ -5,7 +5,9 @@ import etu.ensicaen.client.handlers.ViewHandler;
 import etu.ensicaen.shared.models.Game;
 import etu.ensicaen.shared.models.GameBoard;
 import etu.ensicaen.shared.models.Node;
+import javafx.application.Platform;
 import javafx.beans.property.*;
+import javafx.concurrent.Task;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -100,18 +102,30 @@ public class GameViewModel {
     }
 
     public void onBackToMenu() {
-        try {
-            Client.reconnect();
-            new Thread(() -> {
-                try {
-                    Client.get().leave();
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-            }).start();
-            viewHandler.openMainMenu();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Task<Void> task = new Task<>() {
+            @Override
+            protected Void call() throws Exception {
+                Client.get().leave();
+                Client.reconnect();
+                return null;
+            }
+        };
+
+        task.setOnSucceeded(ev -> {
+            try {
+                viewHandler.openMainMenu();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        task.setOnFailed(ev -> {
+            task.getException().printStackTrace();
+            Platform.runLater(() -> {
+                try { viewHandler.openMainMenu(); }
+                catch (IOException ex) { ex.printStackTrace(); }
+            });
+        });
+
+        new Thread(task).start();
     }
 }
