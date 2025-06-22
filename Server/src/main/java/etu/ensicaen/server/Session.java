@@ -9,6 +9,10 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.UUID;
 
+/**
+ * Represents a game session between two players.
+ * Manages sockets, players, game logic, and communication with clients via ObjectOutputStream.
+ */
 public class Session {
     private static final boolean test = false;
     private final String id;
@@ -20,16 +24,35 @@ public class Session {
     private ObjectOutputStream hostOut;
     private ObjectOutputStream guestOut;
 
+    /**
+     * Creates a new session hosted by a player.
+     *
+     * @param hostSocket the socket of the host player
+     * @param username the username of the host player
+     */
     public Session(Socket hostSocket, String username) {
         this.id = UUID.randomUUID().toString().substring(0, 8);
         this.hostSocket = hostSocket;
         this.players[0] = new Player(username);
     }
 
+    /**
+     * @return the unique session ID
+     */
     public String getId() { return id; }
 
+    /**
+     * @return the current game instance
+     */
     public Game getCurrentGame() { return currentGame; }
 
+    /**
+     * Adds a guest player to the session.
+     *
+     * @param socket the guest player's socket
+     * @param username the guest's username
+     * @return true if successfully added, false if the session already has a guest
+     */
     public synchronized boolean addGuest(Socket socket, String username) {
         if (guestSocket == null) {
             guestSocket = socket;
@@ -39,14 +62,28 @@ public class Session {
         return false;
     }
 
+    /**
+     * Sets the output stream for the host player.
+     *
+     * @param out the host's ObjectOutputStream
+     */
     public synchronized void setHostStream(ObjectOutputStream out) {
         this.hostOut = out;
     }
 
+    /**
+     * Sets the output stream for the guest player.
+     *
+     * @param out the guest's ObjectOutputStream
+     */
     public synchronized void setGuestStream(ObjectOutputStream out) {
         this.guestOut = out;
     }
 
+    /**
+     * Broadcasts the current game state to both players.
+     * If a stream fails, it is invalidated (set to null).
+     */
     public synchronized void broadcastGame() {
         if (hostOut != null) {
             try { hostOut.reset(); hostOut.writeUnshared(currentGame); hostOut.flush(); }
@@ -58,6 +95,12 @@ public class Session {
         }
     }
 
+    /**
+     * Broadcasts a message to both players.
+     *
+     * @param message the message to send
+     * @throws IOException if an I/O error occurs
+     */
     public synchronized void broadcast(String message) throws IOException {
         hostOut.reset();
         hostOut.writeUnshared(message);
@@ -68,6 +111,12 @@ public class Session {
         guestOut.flush();
     }
 
+    /**
+     * Sends a message to a specific player.
+     *
+     * @param out the output stream of the target player
+     * @param message the message to send
+     */
     public synchronized void broadcastTo(ObjectOutputStream out, String message) {
         if (out == null) return;
         try {
@@ -80,10 +129,17 @@ public class Session {
         }
     }
 
+    /**
+     * @return true if both host and guest are connected
+     */
     public boolean isFull() {
         return hostSocket != null && guestSocket != null;
     }
 
+    /**
+     * Initializes a new game instance between the two players.
+     * Randomly selects the starting player.
+     */
     public void initGame() {
         this.currentGame = new Game(players[0], players[1]);
         this.currentGame.setCurrentPlayerIndex(Math.random() < 0.5 ? 0 : 1);
@@ -92,6 +148,10 @@ public class Session {
         }
     }
 
+    /**
+     * Initializes a test configuration of the game.
+     * Used for debugging or demonstration purposes.
+     */
     private void setUpForTest() {
         this.currentGame.setCurrentPlayerIndex(0);
         this.currentGame.getPlayerScores()[0].increase(23);
@@ -103,6 +163,13 @@ public class Session {
         }
     }
 
+    /**
+     * Handles the move made by a player based on their socket.
+     *
+     * @param socket the socket of the player making the move
+     * @param move the index of the selected tile
+     * @throws IOException if an I/O error occurs during communication
+     */
     public void handlePlayerInput(Socket socket, int move) throws IOException {
         int playerIndex = socket.equals(hostSocket) ? 0 : 1;
         if(playerIndex == this.currentGame.getCurrentPlayerIndex()) {
@@ -110,6 +177,13 @@ public class Session {
         }
     }
 
+    /**
+     * Executes a player's turn and updates the game state.
+     *
+     * @param playerIndex the index of the player (0 or 1)
+     * @param move the move index
+     * @throws IOException if broadcasting fails
+     */
     public void playOneTurn(int playerIndex, int move) throws IOException {
         Player currentPlayer = players[playerIndex];
         if(currentGame.hasPossibleMoves(currentPlayer)) {
@@ -129,6 +203,12 @@ public class Session {
         this.checkGameStatus();
     }
 
+    /**
+     * Updates the leaderboard with the current player score.
+     *
+     * @param currentPlayerIndex the index of the winning player
+     * @return true if it is a new high score
+     */
     private boolean handleLeaderboard(int currentPlayerIndex) {
         //Handle Leaderboard
         Leaderboard lb = Server.getLeaderboard();
@@ -138,6 +218,11 @@ public class Session {
         return newPB;
     }
 
+    /**
+     * Checks the current game state and sends messages to the players.
+     *
+     * @throws IOException if sending messages fails
+     */
     public void checkGameStatus() throws IOException {
         int currentPlayerIndex = this.currentGame.getCurrentPlayerIndex();
         switch (this.currentGame.getGameState()) {
@@ -181,6 +266,10 @@ public class Session {
         }
     }
 
+    /**
+     * @param socket the socket of a player
+     * @return the output stream of the other player in the session
+     */
     public synchronized ObjectOutputStream getOtherOutputStream(Socket socket) {
         if (socket.equals(hostSocket)) {
             return guestOut;
@@ -188,19 +277,5 @@ public class Session {
             return hostOut;
         }
         return null;
-    }
-
-    public synchronized void removePlayer(Socket s) {
-        if (s.equals(hostSocket)) {
-            hostSocket = null;
-            hostOut = null;
-        } else if (s.equals(guestSocket)) {
-            guestSocket = null;
-            guestOut = null;
-        }
-    }
-
-    public boolean isEmpty() {
-        return hostSocket == null && guestSocket == null;
     }
 }

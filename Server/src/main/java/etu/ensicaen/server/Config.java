@@ -3,6 +3,9 @@ package etu.ensicaen.server;
 import java.io.InputStream;
 import java.util.Properties;
 
+/**
+ * Utility class to load and provide access to server configuration properties.
+ */
 public class Config {
     private static final Properties props = new Properties();
 
@@ -18,6 +21,12 @@ public class Config {
         }
     }
 
+    /**
+     * Returns the configured port number for the server.
+     *
+     * @return the port number as an integer
+     * @throws NumberFormatException if the port value is not a valid integer
+     */
     public static int port() {
         String val = props.getProperty("server.port");
         return Integer.parseInt(val);

@@ -11,7 +11,18 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+/**
+ * Main application class for the Awale client.
+ * Initializes the client and sets up the main menu view.
+ */
 public class ClientApplication extends Application {
+
+    /**
+     * Starts the JavaFX application.
+     *
+     * @param stage The primary stage for this application, onto which the application scene can be set.
+     * @throws IOException If an I/O error occurs when loading the FXML file.
+     */
     @Override
     public void start(Stage stage) throws IOException {
         try {
@@ -44,6 +55,11 @@ public class ClientApplication extends Application {
         vh.openMainMenu();
     }
 
+    /**
+     * The main method to launch the JavaFX application.
+     *
+     * @param args Command line arguments (not used).
+     */
     public static void main(String[] args) {
         launch();
     }
