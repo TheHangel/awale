@@ -1,0 +1,64 @@
+.main-frame {
+    -fx-background-color: #fff2f3;
+}
+
+.tab-pane .tab {
+    -fx-background-radius: 10 10 0 0;
+    -fx-border-radius: 10 10 0 0;
+    -fx-border-width: 1 1 0 1;
+    -fx-background-color: #faa5b9;
+    -fx-text-base-color: white;
+    -fx-border-color: #e65e7e;
+}
+
+/* Onglet actif */
+.tab-pane .tab:selected {
+    -fx-border-color: #faa5b9; /* bordure rose */
+    -fx-border-width: 1 1 0 1; /* bordure sauf en bas */
+    -fx-text-base-color: #6da6fb; /* texte rose foncé */
+    -fx-font-weight: bold;
+    -fx-background-color: #fff6f6;
+}
+
+.button {
+    -fx-background-color: #faa5b9;
+    -fx-text-fill: white;
+    -fx-background-radius: 50px;
+}
+
+.button-action {
+    -fx-background-color: #74C0FC;
+    -fx-text-fill: white;
+}
+
+.button-operator {
+    -fx-background-color: #e65e7e;
+    -fx-text-fill: white;
+}
+
+.combo-box{
+    -fx-background-color: #fff6f6;
+    -fx-text-fill: black;
+}
+
+.score-box{
+    -fx-background-color: #e0efff;
+    -fx-border-radius: 50px;
+    -fx-background-radius: 50px;
+    -fx-text-fill: black;
+    -fx-border-color: #74C0FC;
+    -fx-border-width: 2px;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.board-box{
+    -fx-background-color: #ffe7e8;
+    -fx-border-radius: 100px;
+    -fx-background-radius: 100px;
+    -fx-text-fill: black;
+    -fx-border-color: #faa5b9;
+    -fx-border-width: 2px;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}

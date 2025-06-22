@@ -45,6 +45,7 @@ public class MainMenuView {
         this.joinTab.disableProperty().bind(this.viewModel.isWaitingVisibleProperty());
         this.joinedText.visibleProperty().bind(this.viewModel.isJoinedProperty());
 
+        this.usernameTextField.setText("Player");
         this.viewModel.usernameProperty().bind(this.usernameTextField.textProperty());
 
         this.usernameTextField.disableProperty().bind(
