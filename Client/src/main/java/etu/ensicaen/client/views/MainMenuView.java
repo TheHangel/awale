@@ -45,6 +45,11 @@ public class MainMenuView {
 
         this.viewModel.usernameProperty().bind(this.usernameTextField.textProperty());
 
+        this.usernameTextField.disableProperty().bind(
+                this.viewModel.isJoinedProperty()
+                .or(this.viewModel.isWaitingVisibleProperty())
+        );
+
         leaderboardListView.setItems(viewModel.leaderboardProperty());
 
         leaderboardListView.setCellFactory(lv -> new ListCell<PlayerScore>() {

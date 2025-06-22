@@ -95,6 +95,9 @@ public class MainMenuViewModel {
 
     @FXML
     public void onHost() {
+        if(this.username.get().isEmpty()) {
+            return;
+        }
         Task<String> task = this.model.host(this.username.get());
         task.setOnSucceeded(ev -> {
             String sessionString = task.getValue();
@@ -108,6 +111,9 @@ public class MainMenuViewModel {
 
     @FXML
     public void onJoin(String id) {
+        if(this.username.get().isEmpty()) {
+            return;
+        }
         Task<String> task = this.model.join(id, this.username.get());
         task.setOnSucceeded(ev -> {
             if(task.getValue().startsWith("ERROR")) {
