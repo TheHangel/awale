@@ -8,6 +8,8 @@
 
 ## English documentation
 
+Awalé is a two-player implementation of the traditional African board game using JavaFX. Players can compete for the highest seed capture.
+
 ### Usage
 
 #### 1. Main Screen
@@ -86,6 +88,8 @@ The game window should appear once both server and client are running.
 ---
 
 ## Documentation francaise
+
+Awalé est une application JavaFX pour jouer à deux au jeu traditionnel africain. Les joueurs jouent l'un contre l'autre pour récupérer le maximum de graines.
 
 ### Manuel d'Utilisation
 
