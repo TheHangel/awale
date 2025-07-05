@@ -58,12 +58,12 @@
 
 ### Deployment
 
-#### Prerequisites / Prérequis
+#### Prerequisites
 
 * Java Development Kit 17 (JDK 17) installed.
 * IntelliJ IDEA or another Java IDE.
 
-#### Deployment Steps / Étapes de déploiement
+#### Deployment Steps
 
 1. **Open Project**
 
@@ -72,11 +72,11 @@
 2. **Configure Java**
 
    * In *Project Structure*, set the SDK to JDK 17 if needed.
-3. **Server Setup / Serveur**
+3. **Server Setup**
 
    * (Optional) Edit `resources/server.properties` to change `server.port` (default 8080).
    * Run the **Server** module via Gradle task `Server:run` or `java -jar`.
-4. **Client Setup / Client**
+4. **Client Setup**
 
    * (Optional) Edit `resources/client.properties` to set `server.host` (default localhost) and `server.port`.
    * Run the **Client** module via Gradle task `Client:run`.
@@ -137,12 +137,12 @@ The game window should appear once both server and client are running.
 
 ### Manuel de Déploiement
 
-#### Prérequis / Prerequisites
+#### Prerequisites
 
 * Java Development Kit 17 (JDK 17) installé.
 * IntelliJ IDEA ou un autre IDE Java.
 
-#### Étapes de déploiement / Deployment Steps
+#### Étapes de déploiement
 
 1. **Ouvrir le projet**
 
@@ -151,11 +151,11 @@ The game window should appear once both server and client are running.
 2. **Configurer Java**
 
    * Dans *Project Structure*, définissez le SDK sur JDK 17 si nécessaire.
-3. **Configuration du serveur / Server Setup**
+3. **Configuration du serveur**
 
    * (Optionnel) Modifiez `resources/server.properties` pour changer `server.port` (8080 par défaut).
    * Exécutez le module **Server** via la tâche Gradle `Server:run` ou `java -jar`.
-4. **Configuration du client / Client Setup**
+4. **Configuration du client**
 
    * (Optionnel) Modifiez `resources/client.properties` pour définir `server.host` (localhost par défaut) et `server.port`.
    * Exécutez le module **Client** via la tâche Gradle `Client:run`.
