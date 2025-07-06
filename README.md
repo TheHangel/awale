@@ -1,5 +1,4 @@
-# Awalé JavaFX Project
-
+# Awalé
 
 - [English](#english-documentation)
 - [Français](#documentation-francaise)
@@ -9,6 +8,21 @@
 ## English documentation
 
 Awalé is a two-player implementation of the traditional African board game using JavaFX. Players can compete for the highest seed capture.
+
+---
+
+## Summary
+
+* [Usage](#usage)
+  * [1. Main Screen](#1-main-screen)
+  * [2. Host](#2-host)
+  * [3. Join](#3-join)
+  * [4. Game Screen](#4-game-screen)
+* [Deployment](#deployment)
+  * [Prerequisites](#prerequisites)
+  * [Deployment Steps](#deployment-steps)
+
+---
 
 ### Usage
 
@@ -91,6 +105,21 @@ The game window should appear once both server and client are running.
 
 Awalé est une application JavaFX pour jouer à deux au jeu traditionnel africain. Les joueurs jouent l'un contre l'autre pour récupérer le maximum de graines.
 
+---
+
+## Sommaire
+
+* [Manuel d'Utilisation](#manuel-dutilisation)
+  * [1. Écran principal](#1-écran-principal)
+  * [2. Héberger](#2-héberger)
+  * [3. Rejoindre](#3-rejoindre)
+  * [4. Écran de jeu](#4-écran-de-jeu)
+* [Manuel de Déploiement](#manuel-de-déploiement)
+  * [Prérequis](#prérequis)
+  * [Étapes de déploiement](#étapes-de-déploiement)
+
+---
+
 ### Manuel d'Utilisation
 
 #### 1. Écran principal
@@ -141,7 +170,7 @@ Awalé est une application JavaFX pour jouer à deux au jeu traditionnel africai
 
 ### Manuel de Déploiement
 
-#### Prerequisites
+#### Prérequis
 
 * Java Development Kit 17 (JDK 17) installé.
 * IntelliJ IDEA ou un autre IDE Java.
